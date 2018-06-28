@@ -46,7 +46,7 @@ check_for_sudo () {
 generate_password () {
   # This will generate a random, 8-character password:
   PASSWORD=`tr -dc A-Za-z0-9_ < /dev/urandom | head -c8`
-  echo $PASSWORD > $l_USERNAME
+  echo $PASSWORD > ".${USERNAME}.pwd"
 }
 
 ### # create the user using useradd and set the password
