@@ -11,43 +11,31 @@
 #Set Script Name variable
 SCRIPT=`basename ${BASH_SOURCE[0]}`
 
+# Use utilities
+UTIL=../util/bash_utils.sh
+source $UTIL
+
 ### # -------------------------------------- ###
 ### # functions
-usage () {
-  local l_MSG=$1
-  echo "Usage Error: $l_MSG"
-  echo "Usage: $SCRIPT -<[SCRIPT_ARG] [ARG_VALUE]"
-  echo "  where <[ARG_VALUE]> [ARG_MEANING]"
-  echo "Recognized optional command line arguments"
-  echo "-[OPTIONAL_ARG] <[OPTIONAL_ARG_VALUE]>  -- [OPTIONAL_ARG_MEANING]"
-  exit 1
-}
-
-### # produce a start message
-start_msg () {
-  echo "Starting $SCRIPT at: "`date +"%Y-%m-%d %H:%M:%S"`
-}
-
-### # produce an end message
-end_msg () {
-  echo "End of $SCRIPT at: "`date +"%Y-%m-%d %H:%M:%S"`
-}
 
 ### # -------------------------------------------- ###
 ### # Use getopts for commandline argument parsing ###
 ### # If an option should be followed by an argument, it should be followed by a ":".
 ### # Notice there is no ":" after "h". The leading ":" suppresses error messages from
 ### # getopts. This is required to get my unrecognized option code to work.
-while getopts :[COMMANDLINE_FLAG]:h: FLAG; do
+while getopts :s:t:h: FLAG; do
   case $FLAG in
-    [COMMANDLINE_FLAG]) # set option "[COMMANDLINE_FLAG]"  
-      [OPTION_STATEMENT]
+    s) # set option "s" for source directory  
+      SOURCEDIR=$OPTARG
+	    ;;
+	  t) # set option "-t" for target directory
+	    TARGETDIR=$OPTARG
 	    ;;
 	  h) # option -h shows usage
-	    usage "Help message for $SCRIPT"
+	    usage $SCRIPT "Help message" "$SCRIPT -s <source> -t <target>" "0"
 	    ;;
 	  *) # invalid command line arguments
-	    usage "Invalid command line argument $OPTARG"
+	    usage $SCRIPT "Invalid command line argument $OPTARG" "$SCRIPT -s <source> -t <target>" "1"
 	    ;;
   esac
 done  
@@ -56,12 +44,14 @@ shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
 
 ### # -------------------------------------------- ##
 ### # Main part of the script starts here ...
-start_msg
+start_msg $SCRIPT
 
+### # checks
+### # source and target directories must exist
 
 ### # -------------------------------------------- ##
 ### # Script ends here
-end_msg
+end_msg $SCRIPT
 
 ### # -------------------------------------------- ##
 ### # What comes below is documentation that can be used with perldoc
