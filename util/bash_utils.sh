@@ -12,11 +12,10 @@ usage () {
   local l_CALLER=$1
   local l_MSG=$2
   local l_USAGE=$3
-  local l_STATUS=$4
   echo " *** CALLER:  $l_CALLER"
   echo " *** MESSAGE: $l_MSG"
   echo " *** USAGE:   $l_USAGE"
-  exit $l_STATUS
+  exit 1
 }
 
 ### # produce a start message
