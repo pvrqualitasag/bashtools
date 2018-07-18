@@ -14,10 +14,11 @@ TDATE=`date +"%Y%m%d"`
 
 # other constants
 GOGSCONTAINERNAME=gogs
-BACKUPTARGET=/backup/docker/data
+BACKUPTARGET=/backup/gogs/data
+INSTALLDIR=/opt/bashtools
 
 # Use utilities
-UTIL=../util/bash_utils.sh
+UTIL=$INSTALLDIR/util/bash_utils.sh
 source $UTIL
 
 
@@ -63,7 +64,7 @@ done
 
 ### # run the backupa
 log_msg $SCRIPT "Running the backup ..."
-docker exec -it $GOGSCONTAINERID /bin/bash -c"export USER=git && cd /app/gogs && ./gogs backup"
+docker exec -it $GOGSCONTAINERID /bin/bash -c "export USER=git && cd /app/gogs && ./gogs backup"
 
 ### # copy the backup files created today
 docker exec $GOGSCONTAINERID /bin/bash -c "ls -1 /app/gogs/gogs-backup-${TDATE}*.zip" | \
