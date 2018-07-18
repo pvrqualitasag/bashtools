@@ -29,3 +29,11 @@ end_msg () {
   local l_SCRIPT=$1
   echo "End of $l_SCRIPT at: "`date +"%Y-%m-%d %H:%M:%S"`
 }
+
+### # functions related to logging
+log_msg () {
+  local l_CALLER=$1
+  local l_MSG=$2
+  local l_RIGHTNOW=`date +"%Y%m%d%H%M%S"`
+  echo "[${l_RIGHTNOW} -- ${l_CALLER}] $l_MSG"
+}
