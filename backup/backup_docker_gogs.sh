@@ -54,7 +54,7 @@ GOGSCONTAINERID=`docker ps -aqf "name=$GOGSCONTAINERNAME"`
 log_msg $SCRIPT "Docker gogs container ID: $GOGSCONTAINERID"
 
 ### # start by removing old backups
-docker exec $GOGSCONTAINERID /bin/bash -c "ls -1 /app/gogs/gogs-backup-*.zip" | \
+docker exec $GOGSCONTAINERID /bin/bash -c "ls -1 /app/gogs/gogs-backup-*.zip 2> /dev/null" | \
 while read e
 do
   log_msg $SCRIPT "Removing old backup: $e"
@@ -64,10 +64,10 @@ done
 
 ### # run the backupa
 log_msg $SCRIPT "Running the backup ..."
-docker exec -it $GOGSCONTAINERID /bin/bash -c "export USER=git && cd /app/gogs && ./gogs backup"
+docker exec -i $GOGSCONTAINERID /bin/bash -c "export USER=git && cd /app/gogs && ./gogs backup"
 
 ### # copy the backup files created today
-docker exec $GOGSCONTAINERID /bin/bash -c "ls -1 /app/gogs/gogs-backup-${TDATE}*.zip" | \
+docker exec $GOGSCONTAINERID /bin/bash -c "ls -1 /app/gogs/gogs-backup-${TDATE}*.zip 2> /dev/null" | \
 while read e
 do 
   log_msg $SCRIPT "Copying backupfile $e to $BACKUPTARGET"
