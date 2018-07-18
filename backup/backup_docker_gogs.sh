@@ -99,7 +99,8 @@ end_msg $SCRIPT
 The backup functionality of gogs is used to create a backup.zip-file. After 
 running the backup, the created backup.zip-file is copied from inside the 
 container to a backup-target directory on the host machine. Old backup.zip 
-files are deleted before starting the backup-job. 
+files are deleted before starting the backup-job. The idea used in this 
+script is taken from https://github.com/gogs/gogs/issues/4339.
 
 
 =head2 Requirements
