@@ -2,10 +2,11 @@
 ###
 ###
 ###
-###   Purpose:   [SCRIPT_PURPOSE]
-###   started:   [START_DATE] ([SCRIPT_AUTHOR])
+###   Purpose:   Get all tags in a template
+###   started:   2018-07-19 (pvr)
 ###
 ### ###################################################################### ###
+
 
 # ================================ # ======================================= #
 # global constants                 #                                         #
@@ -13,55 +14,49 @@
 # directories                      #                                         #
 INSTALLDIR=/opt/bashtools          # installation dir of bashtools on host   #
 # -------------------------------- # --------------------------------------- #
-# prog paths                       # required for cronjob                    #  
-ECHO=/bin/echo                     # PATH to echo                            #
-DATE=/bin/date                     # PATH to date                            #
+# prog paths                       # required for cronjob                    #
 BASENAME=/usr/bin/basename         # PATH to basename function               #
+GREP=/usr/bin/grep                 # PATH to grep                            #
+SORT=/usr/bin/sort                 # PATH to sort                            #
 # ================================ # ======================================= #
+
 
 #Set Script Name variable
 SCRIPT=`$BASENAME ${BASH_SOURCE[0]}`
 
+# other constants
 
-### # ====================================================================== #
+# Use utilities
+UTIL=$INSTALLDIR/util/bash_utils.sh
+source $UTIL
+
+### # -------------------------------------- ###
 ### # functions
-usage () {
-  local l_MSG=$1
-  $ECHO "Usage Error: $l_MSG"
-  $ECHO "Usage: $SCRIPT -<[SCRIPT_ARG] [ARG_VALUE]"
-  $ECHO "  where <[ARG_VALUE]> [ARG_MEANING]"
-  $ECHO "Recognized optional command line arguments"
-  $ECHO "-[OPTIONAL_ARG] <[OPTIONAL_ARG_VALUE]>  -- [OPTIONAL_ARG_MEANING]"
-  exit 1
-}
-
-### # produce a start message
-start_msg () {
-  $ECHO "Starting $SCRIPT at: "`$DATE +"%Y-%m-%d %H:%M:%S"`
-}
-
-### # produce an end message
-end_msg () {
-  $ECHO "End of $SCRIPT at: "`$DATE +"%Y-%m-%d %H:%M:%S"`
-}
 
 
+### # -------------------------------------------- ##
+### # Main part of the script starts here ...
+start_msg $SCRIPT
 
-### # ====================================================================== #
+
+### # -------------------------------------------- ###
 ### # Use getopts for commandline argument parsing ###
 ### # If an option should be followed by an argument, it should be followed by a ":".
 ### # Notice there is no ":" after "h". The leading ":" suppresses error messages from
 ### # getopts. This is required to get my unrecognized option code to work.
-while getopts :[COMMANDLINE_FLAG]:h: FLAG; do
+while getopts :ut:h FLAG; do
   case $FLAG in
-    [COMMANDLINE_FLAG]) # set option "[COMMANDLINE_FLAG]"  
-      [OPTION_STATEMENT]
+    u) # set option "-u" when only unique tags are wanted
+      ONLYUNITAG=TRUE
+      ;;
+    t) # set option "t" to get template file  
+      TEMPLATE=$OPTARG
 	    ;;
 	  h) # option -h shows usage
-	    usage "Help message for $SCRIPT"
+  	  usage $SCRIPT "Help message" "$SCRIPT -t <template_file>"
 	    ;;
 	  *) # invalid command line arguments
-	    usage "Invalid command line argument $OPTARG"
+	    usage $SCRIPT "Invalid command line argument $OPTARG" "$SCRIPT -t <template_file>"
 	    ;;
   esac
 done  
@@ -69,21 +64,25 @@ done
 shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
 
 
+### # check that template file exists
+if [ ! -f "$TEMPLATE" ]
+then
+  usage $SCRIPT "ERROR: Cannot find template_file: $TEMPLATE" "$SCRIPT -t <template_file>"
+fi
+ 
+### # search for template tags using grep
+if [ "$ONLYUNITAG" == "TRUE" ]
+then
+  $GREP -o '\[[A-Z_]*\]' $TEMPLATE | $SORT -u
+else
+  $GREP -o '\[[A-Z_]*\]' $TEMPLATE
+fi
 
-### # ====================================================================== #
-### # Main part of the script starts here ...
-start_msg
-
-
-
-
-### # ====================================================================== #
+### # -------------------------------------------- ##
 ### # Script ends here
-end_msg
+end_msg $SCRIPT
 
-
-
-### # ====================================================================== #
+### # -------------------------------------------- ##
 ### # What comes below is documentation that can be used with perldoc
 
 : <<=cut

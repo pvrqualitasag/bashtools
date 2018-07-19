@@ -5,32 +5,94 @@
 ###   Purpose:   Backup Gogs Inside of docker
 ###   started:   2018-07-17 (pvr)
 ###
-### ######################################### ###
+### ###################################################################### ###
 
+
+# ================================ # ======================================= #
+# global constants                 #                                         #
+GOGSCONTAINERNAME=gogs             # name of docker container running gogs   #
+MOVEBCKINTERVAL=week               # interval of moving bcks to bck-server   # 
+MOVEBCKDOW=7                       # day of week to move bcks                #
+BCKUSR=u182727                     # user name on backup server              #
+BCKSERVER=u182727.your-backup.de   # hostname of backup server               #
+# -------------------------------- # --------------------------------------- #
+# directories                      #                                         #
+BACKUPTARGET=/backup/gogs/data     # backup target directory on host         #
+SFTPTARGET=gogs/data               # target directory on bck server          #
+INSTALLDIR=/opt/bashtools          # installation dir of bashtools on host   #
+GOGSDIR=/app/gogs                  # installation dir of gogs in container   #
+# -------------------------------- # --------------------------------------- #
+# prog paths                       # required for cronjob                    #  
+BASH=/bin/bash                     # PATH to bash-shell in container         #
+LS=/bin/ls                         # PATH to ls                              #
+ECHO=/bin/echo                     # PATH to echo                            #
+SLEEP=/bin/sleep                   # path to sleep                           #
+DATE=/bin/date                     # PATH to date                            #
+BASENAME=/usr/bin/basename         # PATH to basename function               #
+DOCKER=/usr/bin/docker             # PATH to docker executable on host       #
+SFTP=/usr/bin/sftp                 # PATH to sftp program                    #
+TAIL=/usr/bin/tail                 # path to tail                            #
+GOGSPATH=$GOGSDIR/gogs             # PATH to gogs executable in container    #
+# -------------------------------- # --------------------------------------- #
+# derived constants                #                                         #              
+GOGSBCKSTEM=$GOGSDIR/gogs-backup   # stem of produced backup-files by gogs   #
+# ================================ # ======================================= #
 
 #Set Script Name variable
-SCRIPT=`basename ${BASH_SOURCE[0]}`
-TDATE=`date +"%Y%m%d"`
-
-# other constants
-GOGSCONTAINERNAME=gogs
-BACKUPTARGET=/backup/gogs/data
-INSTALLDIR=/opt/bashtools
+SCRIPT=`$BASENAME ${BASH_SOURCE[0]}`
+# Today's date
+TDATE=`$DATE +"%Y%m%d"`
 
 # Use utilities
 UTIL=$INSTALLDIR/util/bash_utils.sh
 source $UTIL
 
 
-### # -------------------------------------- ###
+### # ====================================================================== #
 ### # functions
+### # old backup files inside of the container are first removed
+rm_old_bck () {
+  $DOCKER exec $GOGSCONTAINERID $BASH -c "$LS -1 ${GOGSBCKSTEM}-*.zip 2> /dev/null" | \
+  while read e
+  do
+    log_msg $SCRIPT "Removing old backup: $e"
+    $DOCKER exec $GOGSCONTAINERID $BASH -c "rm $e"
+    $SLEEP 2
+  done
+  
+}
 
+### # the most recent backup is copied from inside of the container to a different disk on the host server
+cp_cur_bck () {
+  $DOCKER exec $GOGSCONTAINERID $BASH -c "$LS -1 ${GOGSBCKSTEM}-${TDATE}*.zip 2> /dev/null" | \
+  while read e
+  do 
+    log_msg $SCRIPT "Copying backupfile $e to $BACKUPTARGET"
+    $DOCKER cp $GOGSCONTAINERID:$e $BACKUPTARGET
+    $SLEEP 2
+  done
+  
+}
 
-### # -------------------------------------------- ##
+### # moving the most recent backup to backup server
+mv_cur_bck () {
+  local l_CURSFTPTRG
+  $LS -1tr $BACKUPTARGET/* 2> /dev/null | $TAIL -1 | \
+  while read e
+  do
+    l_CURSFTPTRG=$SFTPTARGET/`$BASENAME $e`
+    log_msg $SCRIPT "Moving backupfile $e to $l_CURSFTPTRG on backup server"
+    $ECHO -e "put $e $l_CURSFTPTRG" | $SFTP ${BCKUSR}@${BCKSERVER}
+    $SLEEP 2
+  done
+  
+}
+
+### # ====================================================================== #
 ### # Main part of the script starts here ...
 start_msg $SCRIPT
 
-### # -------------------------------------------- ###
+### # ====================================================================== #
 ### # Use getopts for commandline argument parsing ###
 ### # If an option should be followed by an argument, it should be followed by a ":".
 ### # Notice there is no ":" after "h". The leading ":" suppresses error messages from
@@ -50,36 +112,43 @@ shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
 
 
 ### # determine ID of docker container
-GOGSCONTAINERID=`docker ps -aqf "name=$GOGSCONTAINERNAME"`
+GOGSCONTAINERID=`$DOCKER ps -aqf "name=$GOGSCONTAINERNAME"`
 log_msg $SCRIPT "Docker gogs container ID: $GOGSCONTAINERID"
 
 ### # start by removing old backups
-docker exec $GOGSCONTAINERID /bin/bash -c "ls -1 /app/gogs/gogs-backup-*.zip 2> /dev/null" | \
-while read e
-do
-  log_msg $SCRIPT "Removing old backup: $e"
-  docker exec $GOGSCONTAINERID /bin/bash -c "rm $e"
-  sleep 2
-done
+log_msg $SCRIPT "Removing old backups ..."
+rm_old_bck
 
-### # run the backupa
+### # run the backup
 log_msg $SCRIPT "Running the backup ..."
-docker exec -i $GOGSCONTAINERID /bin/bash -c "export USER=git && cd /app/gogs && ./gogs backup"
+$DOCKER exec -i $GOGSCONTAINERID $BASH -c "export USER=git && cd $GOGSDIR && ./gogs backup"
 
-### # copy the backup files created today
-docker exec $GOGSCONTAINERID /bin/bash -c "ls -1 /app/gogs/gogs-backup-${TDATE}*.zip 2> /dev/null" | \
-while read e
-do 
-  log_msg $SCRIPT "Copying backupfile $e to $BACKUPTARGET"
-  docker cp $GOGSCONTAINERID:$e $BACKUPTARGET
-  sleep 2
-done
+### # re-set owner of log back to git
+log_msg $SCRIPT "Re-setting owner of logs ..."
+$DOCKER exec -i $GOGSCONTAINERID $BASH -c "chown -R git:git /app/gogs/log/*"
 
-### # -------------------------------------------- ##
+### # copy the backup files created today to a target directory on the same server
+log_msg $SCRIPT "Copy current backups ..."
+cp_cur_bck
+
+### # depending on $MOVEBCKINTERVAL backups are moved to a backup server
+if [ "$MOVEBCKINTERVAL" == "day" ]
+then 
+  log_msg $SCRIPT "Transfer most recent backup to backup server  ..."
+  mv_cur_bck
+else
+  if [ "$MOVEBCKINTERVAL" == "week" ] && [ `$DATE +"%u"` -eq $MOVEBCKDOW ]
+  then 
+    log_msg $SCRIPT "Transfer most recent backup to backup server  ..."
+    mv_cur_bck
+  fi
+fi
+
+### # ====================================================================== #
 ### # Script ends here
 end_msg $SCRIPT
 
-### # -------------------------------------------- ##
+### # ====================================================================== #
 ### # What comes below is documentation that can be used with perldoc
 
 : <<=cut
