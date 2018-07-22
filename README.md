@@ -9,4 +9,15 @@ When working on the commandline a lot, some tasks are returning all the time. He
 tools available. 
 
 ## Structure
-The repository is structured into subdirectories according to the different contexts in which the tools might be useful.
+The repository is structured into subdirectories according to the different contexts in which the tools might be useful. All tools make use of some of the scripts in subdirectory `util`. Hence the presence of the content of the `util` subdirectory is required.
+
+The following list gives an overview of the content of the different subdirectories.
+
+* __backup__: different backup tools from generic data backup to backing up a gogs instance in a docker container.
+* __sysadmin__: tools useful for sysadmin tasks such as creating users
+* __template__: commonly used template files for creating new tools
+* __util__:     subdirectory with utility scripts and functions
+
+
+## Installation
+The script `install_bashtools.sh` can be used to install either single tools or all tools within a given directory. 
