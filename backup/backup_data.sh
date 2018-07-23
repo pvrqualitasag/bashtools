@@ -7,6 +7,15 @@
 ###
 ### ######################################### ###
 
+# ================================ # ======================================= #
+# global constants                 #                                         #
+# -------------------------------- # --------------------------------------- #
+# directories                      #                                         #
+INSTALLDIR=/opt/bashtools          # installation dir of bashtools on host   #
+# -------------------------------- # --------------------------------------- #
+# prog paths                       # required for cronjob                    #
+BASENAME=/usr/bin/basename         # PATH to basename function               #
+# ================================ # ======================================= #
 
 #Set Script Name variable
 SCRIPT=`basename ${BASH_SOURCE[0]}`
@@ -16,7 +25,7 @@ BACKTAR='tar -czf'
 BACKTARV='tar -cvzf'
 
 # Use utilities
-UTIL=../util/bash_utils.sh
+UTIL=$INSTALLDIR/util/bash_utils.sh
 source $UTIL
 
 ### # -------------------------------------- ###
