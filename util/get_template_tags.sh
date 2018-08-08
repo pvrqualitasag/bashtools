@@ -30,6 +30,9 @@ SCRIPT=`$BASENAME ${BASH_SOURCE[0]}`
 UTIL=$INSTALLDIR/util/bash_utils.sh
 source $UTIL
 
+# regular expression defining the tag
+REGEXTAG='\[[A-Z_]*\]'
+
 ### # -------------------------------------- ###
 ### # functions
 
@@ -73,9 +76,9 @@ fi
 ### # search for template tags using grep
 if [ "$ONLYUNITAG" == "TRUE" ]
 then
-  $GREP -o '\[[A-Z_]*\]' $TEMPLATE | $SORT -u
+  $GREP -o "$REGEXTAG" $TEMPLATE | $SORT -u
 else
-  $GREP -o '\[[A-Z_]*\]' $TEMPLATE
+  $GREP -o "$REGEXTAG" $TEMPLATE
 fi
 
 ### # -------------------------------------------- ##
@@ -90,16 +93,37 @@ end_msg $SCRIPT
 
 =head1 NAME
 
-   [SCRIPT_NAME] - [SCRIPT_SHORT_TITLE]
+   get_template_tags - Extracting tags from a template file
 
 =head1 SYNOPSIS
+
+  get_template_tags.sh -t <template_file> [-u]
+  
+  where: <template_file> specifies the input template file from which tags are to be extracted
 
 
 =head1 DESCRIPTION
 
+Many files that contain scripts or programs share a common structure. This 
+common structure is saved in a template file. The pieces that vary between 
+the different instances of a collection of files is represented by tags. 
+These tags have a special format that does not occur in the constant 
+part of the template file. 
+
+The format of the template is chosen here, rather arbitrarily to match the 
+following regular expression
+
+  \[[A-Z_]*\]
+  
+All this script does is a grep for the above shown regular expression on 
+the given templated file that is specified as input.
+
+With option -u a sorted list of unique tags from the template file is output.
+
 
 =head2 Requirements
 
+The template file that is specified as input must exist
 
 
 =head1 LICENSE
@@ -109,5 +133,6 @@ Artistic License 2.0 http://opensource.org/licenses/artistic-license-2.0
 
 =head1 AUTHOR
 
+Peter von Rohr <peter.vonrohr@qualitasag.ch>
 
 =cut

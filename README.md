@@ -17,6 +17,7 @@ The following list gives an overview of the content of the different subdirector
 * __sysadmin__: tools useful for sysadmin tasks such as creating users
 * __template__: commonly used template files for creating new tools
 * __util__:     subdirectory with utility scripts and functions
+* __git__:      scripts that do common tasks around the version control system `git`
 
 
 ## Installation
