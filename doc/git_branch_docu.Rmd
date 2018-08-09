@@ -1,0 +1,34 @@
+---
+title: "Scratch Notebook For git_branch Scirpt"
+author: "Peter von Rohr"
+output: html_notebook
+---
+
+## Disclaimer
+This shows a few scratch ideas on how to come up with a bash script to do a local branching of a git-project. The idea is that the different branches should be located in different subdirectory under a root-project directory.
+
+
+## Introduction and Background
+
+
+## Scratch Ideas Based On History Excerpt
+
+```{bash, eval=FALSE}
+### define a few variables that describe the process
+  591  BRANCH=gh-pages
+  593  PROJECT=NewEbvGoat
+  594  PROJROOT=${PROJECT}_ROOT
+### # create the new directories for the branches below the given root  
+  595  mkdir -p $PROJROOT/master $PROJROOT/$BRANCH
+### # copy the existing project into the branch subdirectories  
+  596  cp -R $PROJECT $PROJROOT/master
+       cp -R $PROJECT $PROJROOT/$BRANCH
+### # cd to the branch subdir and change to the git-branch
+cd $PROJROOT/$BRANCH/$PROJECT
+  637  git branch $BRANCH
+  640  git checkout $BRANCH
+### # delete old master branch  
+  644  git branch -d master
+### # push  
+```
+

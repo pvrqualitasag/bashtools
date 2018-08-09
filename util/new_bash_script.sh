@@ -24,6 +24,7 @@ SCRIPT=`$BASENAME ${BASH_SOURCE[0]}`
 
 # other constants
 TEMPLATEPATH=$INSTALLDIR/template/bash/bash_script_ut.template
+GETTAGSCRIPT=$INSTALLDIR/util/get_template_tags.sh
 
 # Use utilities
 UTIL=$INSTALLDIR/util/bash_utils.sh
@@ -59,6 +60,11 @@ while getopts :t:h FLAG; do
 done  
 
 shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
+
+### # checking prerequisits
+check_exist_file_fail $TEMPLATEPATH
+check_exist_file_fail $GETTAGSCRIPT
+
 
 ### # in a loop over all tags in the template file, ask the user what value
 ### #  should be inserted into the template
