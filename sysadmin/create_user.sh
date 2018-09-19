@@ -47,7 +47,6 @@ check_for_sudo () {
 generate_password () {
   # This will generate a random, 8-character password:
   PASSWORD=`tr -dc A-Za-z0-9_ < /dev/urandom | head -c8`
-  echo $PASSWORD > ".${USERNAME}.pwd"
 }
 
 ### # create the user using useradd and set the password
@@ -62,6 +61,9 @@ create_user () {
 
   # This will actually set the password:
   echo "$l_USERNAME:$l_PASS" | chpasswd  
+  
+  # write username and password to a file
+  echo "${l_USERNAME},${l_PASS}" > ".${l_USERNAME}.pwd"
 }  
 
 ### Start getopts code ###
