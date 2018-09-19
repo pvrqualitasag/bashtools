@@ -10,6 +10,7 @@
 
 #Set Script Name variable
 SCRIPT=`basename ${BASH_SOURCE[0]}`
+DEFAULTSHELL=/bin/bash
 
 
 ### # functions
