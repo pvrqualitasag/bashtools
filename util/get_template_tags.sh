@@ -37,20 +37,18 @@ REGEXTAG='\[[A-Z_]*\]'
 ### # functions
 
 
-### # -------------------------------------------- ##
-### # Main part of the script starts here ...
-start_msg $SCRIPT
-
-
 ### # -------------------------------------------- ###
 ### # Use getopts for commandline argument parsing ###
 ### # If an option should be followed by an argument, it should be followed by a ":".
 ### # Notice there is no ":" after "h". The leading ":" suppresses error messages from
 ### # getopts. This is required to get my unrecognized option code to work.
-while getopts :ut:h FLAG; do
+while getopts :uvt:h FLAG; do
   case $FLAG in
     u) # set option "-u" when only unique tags are wanted
       ONLYUNITAG=TRUE
+      ;;
+    v) # set option -v for verbose mode
+      VERBOSE=TRUE
       ;;
     t) # set option "t" to get template file  
       TEMPLATE=$OPTARG
@@ -66,6 +64,12 @@ done
 
 shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
 
+### # -------------------------------------------- ##
+### # Main part of the script starts here ...
+if [ "$VERBOSE" == "TRUE" ] 
+then
+  start_msg $SCRIPT
+fi
 
 ### # check that template file exists
 if [ ! -f "$TEMPLATE" ]
@@ -83,7 +87,10 @@ fi
 
 ### # -------------------------------------------- ##
 ### # Script ends here
-end_msg $SCRIPT
+if [ "$VERBOSE" == "TRUE" ] 
+then
+  end_msg $SCRIPT
+fi
 
 ### # -------------------------------------------- ##
 ### # What comes below is documentation that can be used with perldoc
@@ -97,7 +104,7 @@ end_msg $SCRIPT
 
 =head1 SYNOPSIS
 
-  get_template_tags.sh -t <template_file> [-u]
+  get_template_tags.sh -t <template_file> [-u] [-v]
   
   where: <template_file> specifies the input template file from which tags are to be extracted
 
@@ -119,6 +126,7 @@ All this script does is a grep for the above shown regular expression on
 the given templated file that is specified as input.
 
 With option -u a sorted list of unique tags from the template file is output.
+Option -v runs the script in a verbose mode with additional output.
 
 
 =head2 Requirements

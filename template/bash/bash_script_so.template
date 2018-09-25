@@ -28,10 +28,10 @@ SCRIPT=`$BASENAME ${BASH_SOURCE[0]}`
 usage () {
   local l_MSG=$1
   $ECHO "Usage Error: $l_MSG"
-  $ECHO "Usage: $SCRIPT -<[SCRIPT_ARG] [ARG_VALUE]"
-  $ECHO "  where <[ARG_VALUE]> [ARG_MEANING]"
+  $ECHO "Usage: $SCRIPT "
+  $ECHO "  where "
   $ECHO "Recognized optional command line arguments"
-  $ECHO "-[OPTIONAL_ARG] <[OPTIONAL_ARG_VALUE]>  -- [OPTIONAL_ARG_MEANING]"
+  $ECHO ""
   exit 1
 }
 
@@ -52,11 +52,8 @@ end_msg () {
 ### # If an option should be followed by an argument, it should be followed by a ":".
 ### # Notice there is no ":" after "h". The leading ":" suppresses error messages from
 ### # getopts. This is required to get my unrecognized option code to work.
-while getopts :[COMMANDLINE_FLAG]:h: FLAG; do
+while getopts :h: FLAG; do
   case $FLAG in
-    [COMMANDLINE_FLAG]) # set option "[COMMANDLINE_FLAG]"  
-      [OPTION_STATEMENT]
-	    ;;
 	  h) # option -h shows usage
 	    usage "Help message for $SCRIPT"
 	    ;;
@@ -110,5 +107,11 @@ Artistic License 2.0 http://opensource.org/licenses/artistic-license-2.0
 
 =head1 AUTHOR
 
+[SCRIPT_AUTHOR]
+
+
+=head1 DATE
+
+[START_DATE]
 
 =cut
