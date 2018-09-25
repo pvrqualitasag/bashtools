@@ -30,5 +30,8 @@ cd $PROJROOT/$BRANCH/$PROJECT
 ### # delete old master branch  
   644  git branch -d master
 ### # push  
+git add .
+git commit -m "First commit to branch"
+git push origin $BRANCH
 ```
 

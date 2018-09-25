@@ -68,7 +68,15 @@ check_exist_file_fail $GETTAGSCRIPT
 
 ### # in a loop over all tags in the template file, ask the user what value
 ### #  should be inserted into the template
+tags=()
+$GETTAGSCRIPT -t $TEMPLATEPATH -u | \
+while read tag
+do
+  tags+=("$tag")
+done
 
+log_msg $SCRIPT "Tags collected:"
+echo ${tags[@]}
 
 ### # ====================================================================== #
 ### # Script ends here
