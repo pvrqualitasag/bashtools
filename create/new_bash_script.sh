@@ -7,28 +7,33 @@
 ###
 ### ###################################################################### ###
 
+# ======================================== # ======================================= #
+# global constants                         #                                         #
+# ---------------------------------------- # --------------------------------------- #
+# directories                              #                                         #
+INSTALLDIR=/opt/bashtools                  # installation dir of bashtools on host   #
+# ---------------------------------------- # --------------------------------------- #
+# prog paths                               #                                         #
+BASENAME=/usr/bin/basename                 # PATH to basename function               #
+DIRNAME=/usr/bin/dirname                   # PATH to dirname function                #
+# ---------------------------------------- # --------------------------------------- #
+# directories                              #                                         #
+INSTALLDIR=`$DIRNAME ${BASH_SOURCE[0]}`    # installation dir of bashtools on host   #
+UTILDIR=$INSTALLDIR/../util                # directory containing utilities          #
+TEMPLATEDIR=$INSTALLDIR/../template        # directory containing templates          #
+# ---------------------------------------- # --------------------------------------- #
+# files                                    #                                         #
+SCRIPT=`$BASENAME ${BASH_SOURCE[0]}`       # Set Script Name variable                #
+# ======================================== # ======================================= #
 
-# ================================ # ======================================= #
-# global constants                 #                                         #
-# -------------------------------- # --------------------------------------- #
-# directories                      #                                         #
-INSTALLDIR=/opt/bashtools          # installation dir of bashtools on host   #
-# -------------------------------- # --------------------------------------- #
-# prog paths                       # required for cronjob                    #
-BASENAME=/usr/bin/basename         # PATH to basename function               #
-# ================================ # ======================================= #
-
-
-#Set Script Name variable
-SCRIPT=`$BASENAME ${BASH_SOURCE[0]}`
-
-# other constants
-TEMPLATEPATH=$INSTALLDIR/template/bash/bash_script_ut.template
-GETTAGSCRIPT=$INSTALLDIR/util/get_template_tags.sh
 
 # Use utilities
-UTIL=$INSTALLDIR/util/bash_utils.sh
+UTIL=$UTILDIR/bash_utils.sh
 source $UTIL
+
+# other constants
+TEMPLATEPATH=$TEMPLATEDIR/bash/bash_script_ut.template
+GETTAGSCRIPT=$UTILDIR/get_template_tags.sh
 
 
 ### # ====================================================================== #
@@ -68,34 +73,20 @@ check_exist_file_fail $GETTAGSCRIPT
 
 ### # in a loop over all tags in the template file, ask the user what value
 ### #  should be inserted into the template
-# $GETTAGSCRIPT -t $TEMPLATEPATH -u | \
-# while read tag
-# do
-#   log_msg $SCRIPT "Current tag: $tag"
-#   
-# done
-
 tags=()
-$GETTAGSCRIPT -t $TEMPLATEPATH -u | \
+### # use process substitutions to collect the tags according to 
+### #  https://stackoverflow.com/questions/9985076/bash-populate-an-array-in-loop
 while read tag
 do
   tags=(${tags[@]} ${tag})
   log_msg $SCRIPT "Current tag: $tag"
-done
+done < <($GETTAGSCRIPT -t $TEMPLATEPATH -u)
 
-echo "Tags: ${tags[@]}"
-
-# loop over tags
+# loop over tags 
 for i in ${!tags[@]}
 do
   log_msg $SCRIPT "Tag loop $i: ${tags[i]}"
 done  
-
-Fruits=(Apple Mango Orange Banana Grapes Watermelon);
-
-Fruits=(${Fruits[@]} Blackberry Blueberry)
-
-echo "${Fruits[@]}"
 
 ### # ====================================================================== #
 ### # Script ends here

@@ -8,26 +8,26 @@
 ### ###################################################################### ###
 
 
-# ================================ # ======================================= #
-# global constants                 #                                         #
-# -------------------------------- # --------------------------------------- #
-# directories                      #                                         #
-INSTALLDIR=/opt/bashtools          # installation dir of bashtools on host   #
-# -------------------------------- # --------------------------------------- #
-# prog paths                       # required for cronjob                    #
-BASENAME=/usr/bin/basename         # PATH to basename function               #
-GREP=/usr/bin/grep                 # PATH to grep                            #
-SORT=/usr/bin/sort                 # PATH to sort                            #
-# ================================ # ======================================= #
+# ======================================== # ======================================= #
+# global constants                         #                                         #
+# ---------------------------------------- # --------------------------------------- #
+# prog paths                               # required for cronjob                    #
+DIRNAME=/usr/bin/dirname                   # PATH to dirname function                #
+BASENAME=/usr/bin/basename                 # PATH to basename function               #
+GREP=/usr/bin/grep                         # PATH to grep                            #
+SORT=/usr/bin/sort                         # PATH to sort                            #
+# ---------------------------------------- # --------------------------------------- #
+# directories                              #                                         #
+INSTALLDIR=`$DIRNAME ${BASH_SOURCE[0]}`    # installation dir of bashtools on host   #
+UTILDIR=$INSTALLDIR/../util                # directory containing utilities          #
+# ---------------------------------------- # --------------------------------------- #
+# files                                    #                                         #
+SCRIPT=`$BASENAME ${BASH_SOURCE[0]}`       # Set Script Name variable                #
+# ======================================== # ======================================= #
 
-
-#Set Script Name variable
-SCRIPT=`$BASENAME ${BASH_SOURCE[0]}`
-
-# other constants
 
 # Use utilities
-UTIL=$INSTALLDIR/util/bash_utils.sh
+UTIL=$UTILDIR/bash_utils.sh
 source $UTIL
 
 # regular expression defining the tag
