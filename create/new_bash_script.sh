@@ -163,7 +163,12 @@ end_msg $SCRIPT
 
 =head1 SYNOPSIS
 
-   new_bash_script.sh -t <template_file>
+   new_bash_script.sh -o <output_file> -t <template_file> 
+   
+      additional recognized options:
+        -q   running in quiet mode without template-tag replacement
+        -h   show usage message
+        
 
 =head1 DESCRIPTION
 
@@ -179,9 +184,21 @@ This script asks the user for the actual values with which the different
 tags in a template should be replaced with.
 
 
+=head2 Options
+
+The following options can be used to parameterize the creation of a new script. 
+
+  -o <output_file>   : specify the name of the newly created script
+  -t <template_file> : specify the name of the template to be used
+  -q                 : runs the script in quiet mode without template tag replacement
+  -h                 : shows the usage message
+  
+None of the above options are mandatory. There are reasonable defaults for all parameters
+
+
 =head2 Requirements
 
-When specifying a template file, this file must exist.
+When specifying a template file, the template file must exist.
 
 
 =head1 LICENSE
