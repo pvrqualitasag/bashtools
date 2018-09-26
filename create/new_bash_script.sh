@@ -130,6 +130,10 @@ do
   then
     defaultvalue=$AUTHORNAME
   fi
+  if [ "$CURTAG" == "__BASHTOOLUTILDIR__" ]
+  then
+    defaultvalue=$UTILDIR
+  fi
   # read input from command line
   read -p "$CURTAG [$defaultvalue]: " inputvalue
   # check whether default or input should be used
