@@ -14,7 +14,7 @@
 # prog paths                               # required for cronjob                    #
 DIRNAME=/usr/bin/dirname                   # PATH to dirname function                #
 BASENAME=/usr/bin/basename                 # PATH to basename function               #
-GREP=/usr/bin/grep                         # PATH to grep                            #
+GREP=`which grep`                          # PATH to grep                            #
 SORT=/usr/bin/sort                         # PATH to sort                            #
 # ---------------------------------------- # --------------------------------------- #
 # directories                              #                                         #

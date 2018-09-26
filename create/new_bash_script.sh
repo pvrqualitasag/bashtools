@@ -13,8 +13,7 @@
 # prog paths                               #                                         #
 BASENAME=/usr/bin/basename                 # PATH to basename function               #
 DIRNAME=/usr/bin/dirname                   # PATH to dirname function                #
-READ=/usr/bin/read                         # PATH to read function                   #
-SED=/usr/bin/sed                           # PATH to sed                             #
+SED=`which sed`                            # PATH to sed                             #
 WHOAMI=/usr/bin/whoami                     # PATH to whoami
 DATE=/bin/date                             # PATH to date                            #
 CP=/bin/cp                                 # PATH to cp                              #
@@ -35,7 +34,7 @@ UTIL=$UTILDIR/bash_utils.sh
 source $UTIL
 
 # other constants
-TEMPLATEPATH=$TEMPLATEDIR/bash/bash_script_ut.template
+TEMPLATEPATH=$TEMPLATEDIR/bash/bash_script_so.template
 GETTAGSCRIPT=$UTILDIR/get_template_tags.sh
 OUTPUTPATH=`$DATE +"%Y%m%d%H%M%S"`_new_script.sh
 
