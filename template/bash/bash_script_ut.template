@@ -2,8 +2,8 @@
 ###
 ###
 ###
-###   Purpose:   [SCRIPT_PURPOSE]
-###   started:   [START_DATE] ([SCRIPT_AUTHOR])
+###   Purpose:   __PURPOSE__
+###   started:   __STARTDATE__ (__AUTHORABBREV__)
 ###
 ### ###################################################################### ###
 
@@ -72,12 +72,14 @@ end_msg $SCRIPT
 
 =head1 NAME
 
-   [SCRIPT_NAME] - [SCRIPT_SHORT_TITLE]
+   __SCRIPTNAME__ - __SHORTTITLE__
 
 =head1 SYNOPSIS
 
 
 =head1 DESCRIPTION
+
+__DESCRIPTION__
 
 
 =head2 Requirements
@@ -91,12 +93,12 @@ Artistic License 2.0 http://opensource.org/licenses/artistic-license-2.0
 
 =head1 AUTHOR
 
-[SCRIPT_AUTHOR]
+__AUTHORNAME__ <__AUTHOREMAIL__>
 
 
 =head1 DATE
 
-[START_DATE]
+__STARTDATE__
 
 
 =cut

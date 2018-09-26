@@ -10,12 +10,15 @@
 # ======================================== # ======================================= #
 # global constants                         #                                         #
 # ---------------------------------------- # --------------------------------------- #
-# directories                              #                                         #
-INSTALLDIR=/opt/bashtools                  # installation dir of bashtools on host   #
-# ---------------------------------------- # --------------------------------------- #
 # prog paths                               #                                         #
 BASENAME=/usr/bin/basename                 # PATH to basename function               #
 DIRNAME=/usr/bin/dirname                   # PATH to dirname function                #
+READ=/usr/bin/read                         # PATH to read function                   #
+SED=/usr/bin/sed                           # PATH to sed                             #
+WHOAMI=/usr/bin/whoami                     # PATH to whoami
+DATE=/bin/date                             # PATH to date                            #
+CP=/bin/cp                                 # PATH to cp                              #
+MV=/bin/mv                                 # PATH to mv                              #
 # ---------------------------------------- # --------------------------------------- #
 # directories                              #                                         #
 INSTALLDIR=`$DIRNAME ${BASH_SOURCE[0]}`    # installation dir of bashtools on host   #
@@ -34,6 +37,12 @@ source $UTIL
 # other constants
 TEMPLATEPATH=$TEMPLATEDIR/bash/bash_script_ut.template
 GETTAGSCRIPT=$UTILDIR/get_template_tags.sh
+OUTPUTPATH=`$DATE +"%Y%m%d%H%M%S"`_new_script.sh
+
+# defaults for tags
+STARTDATE=`$DATE +"%Y-%m-%d %H:%M:%S"`
+AUTHORABBREV=`$WHOAMI`
+AUTHORNAME=`$WHOAMI`
 
 
 ### # ====================================================================== #
@@ -41,17 +50,18 @@ GETTAGSCRIPT=$UTILDIR/get_template_tags.sh
 
 
 ### # ====================================================================== #
-### # Main part of the script starts here ...
-start_msg $SCRIPT
-
-
-### # ====================================================================== #
 ### # Use getopts for commandline argument parsing                         ###
 ### # If an option should be followed by an argument, it should be followed by a ":".
 ### # Notice there is no ":" after "h". The leading ":" suppresses error messages from
 ### # getopts. This is required to get my unrecognized option code to work.
-while getopts :t:h FLAG; do
+while getopts :o:qt:h FLAG; do
   case $FLAG in
+    o) # set option -o to specify output file
+      OUTPUTPATH=$OPTARG
+      ;;
+    q) # set option -s to run in silent mode without tag replacement
+      QUIET=TRUE
+      ;;
     t) # set option "-t"  to specify the template file
       TEMPLATEPATH=$OPTARG
 	    ;;
@@ -59,18 +69,35 @@ while getopts :t:h FLAG; do
   	  usage $SCRIPT "Help message" "$SCRIPT -t <template_file>"
 	    ;;
 	  *) # invalid command line arguments
-	    usage $SCRIPT "Invalid command line argument $OPTARG" "$SCRIPT -t <template_file>"
+	    usage $SCRIPT "Invalid command line argument $OPTARG" "$SCRIPT -o <output_file> -t <template_file>"
 	    ;;
   esac
 done  
 
 shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
 
+
+### # ====================================================================== #
+### # Main part of the script starts here ...
+start_msg $SCRIPT
+
+
 ### # checking prerequisits
 check_exist_file_fail $TEMPLATEPATH
 check_exist_file_fail $GETTAGSCRIPT
 
 
+### # set the template to be the first version of the output
+$CP $TEMPLATEPATH $OUTPUTPATH
+
+### # in case, we are in silent mode, we stop here
+if [ "$QUIET" == "TRUE" ]
+then
+  end_msg $SCRIPT
+  exit 0
+fi
+
+### # in non-silent mode run tag replacement
 ### # in a loop over all tags in the template file, ask the user what value
 ### #  should be inserted into the template
 tags=()
@@ -78,15 +105,47 @@ tags=()
 ### #  https://stackoverflow.com/questions/9985076/bash-populate-an-array-in-loop
 while read tag
 do
-  tags=(${tags[@]} ${tag})
-  log_msg $SCRIPT "Current tag: $tag"
+  tags+=( ${tag} )
+  # log_msg $SCRIPT "Current tag: $tag"
 done < <($GETTAGSCRIPT -t $TEMPLATEPATH -u)
+
+### # notify user that replacement values should be entered
+log_msg $SCRIPT "Enter replacement values for template tags ..."
 
 # loop over tags 
 for i in ${!tags[@]}
 do
-  log_msg $SCRIPT "Tag loop $i: ${tags[i]}"
+  # log_msg $SCRIPT "Tag loop $i: ${tags[i]}"
+  CURTAG=${tags[i]}
+  # check for defaults
+  defaultvalue=''
+  if [ "$CURTAG" == "__STARTDATE__" ]
+  then
+    defaultvalue=$STARTDATE
+  fi
+  if [ "$CURTAG" == "__AUTHORABBREV__" ]
+  then
+    defaultvalue=$AUTHORABBREV
+  fi
+  if [ "$CURTAG" == "__AUTHORNAME__" ]
+  then
+    defaultvalue=$AUTHORNAME
+  fi
+  # read input from command line
+  read -p "$CURTAG [$defaultvalue]: " inputvalue
+  # check whether default or input should be used
+  if [ -z "$inputvalue" ]
+  then
+    replacevalue=$defaultvalue
+  else
+    replacevalue=$inputvalue
+  fi
+  # replacement of current tag
+  $SED "s/$CURTAG/$replacevalue/g" < $OUTPUTPATH  > $OUTPUTPATH.new
+  # prepare input of new round from output of current round
+  $MV $OUTPUTPATH.new $OUTPUTPATH
 done  
+
 
 ### # ====================================================================== #
 ### # Script ends here

@@ -31,7 +31,7 @@ UTIL=$UTILDIR/bash_utils.sh
 source $UTIL
 
 # regular expression defining the tag
-REGEXTAG='\[[A-Z_]*\]'
+REGEXTAG='__[A-Z_]*__'
 
 ### # -------------------------------------- ###
 ### # functions
