@@ -14,15 +14,16 @@
 BASENAME=/usr/bin/basename                 # PATH to basename function               #
 DIRNAME=/usr/bin/dirname                   # PATH to dirname function                #
 SED=`which sed`                            # PATH to sed                             #
-WHOAMI=/usr/bin/whoami                     # PATH to whoami
+WHOAMI=/usr/bin/whoami                     # PATH to whoami                          #
 DATE=/bin/date                             # PATH to date                            #
 CP=/bin/cp                                 # PATH to cp                              #
 MV=/bin/mv                                 # PATH to mv                              #
 # ---------------------------------------- # --------------------------------------- #
 # directories                              #                                         #
-INSTALLDIR=`$DIRNAME ${BASH_SOURCE[0]}`    # installation dir of bashtools on host   #
-UTILDIR=$INSTALLDIR/../util                # directory containing utilities          #
-TEMPLATEDIR=$INSTALLDIR/../template        # directory containing templates          #
+INSTALLDIR=`$DIRNAME ${BASH_SOURCE[0]}`    # installation dir of this script         #
+BASHTOOLDIR=`$DIRNAME $INSTALLDIR`         # directory of bashtools on host          #
+UTILDIR=$BASHTOOLDIR/util                  # directory containing utilities          #
+TEMPLATEDIR=$BASHTOOLDIR/template          # directory containing templates          #
 # ---------------------------------------- # --------------------------------------- #
 # files                                    #                                         #
 SCRIPT=`$BASENAME ${BASH_SOURCE[0]}`       # Set Script Name variable                #
@@ -144,7 +145,7 @@ do
     replacevalue=$inputvalue
   fi
   # replacement of current tag
-  $SED "s/$CURTAG/$replacevalue/g" < $OUTPUTPATH  > $OUTPUTPATH.new
+  $SED "s#$CURTAG#$replacevalue#g" < $OUTPUTPATH  > $OUTPUTPATH.new
   # prepare input of new round from output of current round
   $MV $OUTPUTPATH.new $OUTPUTPATH
 done  
