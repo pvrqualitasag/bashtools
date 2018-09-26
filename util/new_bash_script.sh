@@ -79,9 +79,11 @@ tags=()
 $GETTAGSCRIPT -t $TEMPLATEPATH -u | \
 while read tag
 do
-  tags+=( "$tag" )
+  tags=(${tags[@]} ${tag})
   log_msg $SCRIPT "Current tag: $tag"
 done
+
+echo "Tags: ${tags[@]}"
 
 # loop over tags
 for i in ${!tags[@]}
@@ -89,6 +91,11 @@ do
   log_msg $SCRIPT "Tag loop $i: ${tags[i]}"
 done  
 
+Fruits=(Apple Mango Orange Banana Grapes Watermelon);
+
+Fruits=(${Fruits[@]} Blackberry Blueberry)
+
+echo "${Fruits[@]}"
 
 ### # ====================================================================== #
 ### # Script ends here
