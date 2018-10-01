@@ -14,7 +14,7 @@ set -o pipefail
 # ======================================== # ======================================= #
 # global constants                         #                                         #
 # ---------------------------------------- # --------------------------------------- #
-# prog paths                               # required for cronjob                    #  
+# prog paths                               #                                         #  
 ECHO=/bin/echo                             # PATH to echo                            #
 DATE=/bin/date                             # PATH to date                            #
 BASENAME=/usr/bin/basename                 # PATH to basename function               #
@@ -111,6 +111,7 @@ __DESCRIPTION__
 
 =head2 Requirements
 
+__REQUIREMENTS__
 
 
 =head1 LICENSE
