@@ -7,7 +7,11 @@
 ###
 ### ###################################################################### ###
 
+set -o errexit
+set -o nounset
+set -o pipefail
 
+# #
 # ======================================== # ============================================= #
 # global constants                         #                                               #
 # ---------------------------------------- # --------------------------------------------- #
@@ -38,14 +42,33 @@ source $UTIL
 ### # If an option should be followed by an argument, it should be followed by a ":".
 ### # Notice there is no ":" after "h". The leading ":" suppresses error messages from
 ### # getopts. This is required to get my unrecognized option code to work.
-while getopts :h FLAG; do
+a_example=""
+b_example=""
+c_example=""
+while getopts ":a:b:ch" FLAG; do
   case $FLAG in
-	  h) # option -h shows usage
-  	  usage $SCRIPT "Help message" "$SCRIPT "
-	    ;;
-	  *) # invalid command line arguments
-	    usage $SCRIPT "Invalid command line argument $OPTARG" "$SCRIPT"
-	    ;;
+    h) # option -h shows usage
+      usage $SCRIPT "Help message" "$SCRIPT -a <a_example>"
+      ;;
+    a)
+      a_example=$OPTARG
+# OR for files
+#      check_exist_file_fail $OPTARG
+# OR for directories
+#      check_exist_dir_fail $OPTARG
+      ;;
+    b)
+      b_example=$OPTARG
+      ;;
+    c)
+      c_example="c_example_value"
+      ;;
+    :)
+      usage "-$OPTARG requires an argument"
+      ;;
+    ?)
+      usage "Invalid command line argument (-$OPTARG) found"
+      ;;
   esac
 done  
 
@@ -55,6 +78,11 @@ shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
 ### # ====================================================================== #
 ### # Main part of the script starts here ...
 start_msg $SCRIPT
+
+# Check whether required arguments have been defined
+if test "$a_example" == ""; then
+  usage $SCRIPT "-a a_example not defined" "$SCRIPT -a <a_example>"
+fi
 
 ### # Continue to put your code here
 
