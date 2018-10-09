@@ -81,7 +81,7 @@ check_already_exists_dir_fail () {
   local l_check_dir=$1
   if [ -d "$l_check_dir" ]
   then
-    log_msg check_exist_dir_fail "FAILED because directory: $l_check_dir already exists"
+    log_msg check_already_exists_dir_fail "FAILED because directory: $l_check_dir already exists"
     exit 1
   fi
 }
