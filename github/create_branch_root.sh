@@ -2,8 +2,8 @@
 ###
 ###
 ###
-###   Purpose:   __PURPOSE__
-###   started:   __STARTDATE__ (__AUTHORABBREV__)
+###   Purpose:   Create branch specific subdirectories
+###   started:   2018-10-17 08:38:10 (pvr)
 ###
 ### ###################################################################### ###
 
@@ -22,10 +22,13 @@ DIRNAME=/usr/bin/dirname                   # PATH to dirname function           
 # ---------------------------------------- # --------------------------------------------- #
 # directories                              #                                               #
 INSTALLDIR=`$DIRNAME ${BASH_SOURCE[0]}`    # installation dir of bashtools on host         #
-UTILDIR=__BASHTOOLUTILDIR__                # directory containing utilities of bashtools   #
+UTILDIR=/opt/bashtools/util                # directory containing utilities of bashtools   #
 # ---------------------------------------- # --------------------------------------------- #
 # files                                    #                                               #
 SCRIPT=`$BASENAME ${BASH_SOURCE[0]}`       # Set Script Name variable                      #
+# ---------------------------------------- # --------------------------------------------- #
+# other constants                          #                                               #
+BRANCHES=(master gh-pages)
 # ======================================== # ============================================= #
 
 
@@ -43,26 +46,14 @@ source $UTIL
 ### # If an option should be followed by an argument, it should be followed by a ":".
 ### # Notice there is no ":" after "h". The leading ":" suppresses error messages from
 ### # getopts. This is required to get my unrecognized option code to work.
-a_example=""
-b_example=""
-c_example=""
-while getopts ":a:b:ch" FLAG; do
+proj_dir=""
+while getopts ":p:h" FLAG; do
   case $FLAG in
     h) # option -h shows usage
-      usage $SCRIPT "Help message" "$SCRIPT -a <a_example>"
+      usage $SCRIPT "Help message" "$SCRIPT -p <project_dir>"
       ;;
-    a)
-      a_example=$OPTARG
-# OR for files
-#      check_exist_file_fail $OPTARG
-# OR for directories
-#      check_exist_dir_fail $OPTARG
-      ;;
-    b)
-      b_example=$OPTARG
-      ;;
-    c)
-      c_example="c_example_value"
+    p)
+      proj_dir=$OPTARG
       ;;
     :)
       usage "-$OPTARG requires an argument"
@@ -81,16 +72,28 @@ shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
 start_msg $SCRIPT
 
 # Check whether required arguments have been defined
-if test "$a_example" == ""; then
-  usage $SCRIPT "-a a_example not defined" "$SCRIPT -a <a_example>"
+if test "$proj_dir" == ""; then
+  usage $SCRIPT "value of project_directory not defined" "$SCRIPT -p <project_dir>"
 fi
 
-### # Continue to put your code here
+# check whether project_directory exists
+check_exist_dir_fail $proj_dir
 
+### # Create root directory and branch specific subdirectories
+proj_root="${proj_dir}_gh-root"
+for b in "${BRANCHES[@]}"
+do
+  log_msg $SCRIPT "Create directory $proj_root/$b"
+  mkdir -p $proj_root/$b
+done  
+
+### # move proj_dir to proj_root/master/
+mv $proj_dir $proj_root/master
 
 ### # ====================================================================== #
 ### # Script ends here
-end_msg $SCRIPT
+end_msg $SCRIPT 
+
 
 ### # ====================================================================== #
 ### # What comes below is documentation that can be used with perldoc
@@ -100,14 +103,14 @@ end_msg $SCRIPT
 
 =head1 NAME
 
-   __SCRIPTNAME__ - __SHORTTITLE__
+   creat_branch_root - Github branch subdirectories
 
 =head1 SYNOPSIS
 
 
 =head1 DESCRIPTION
 
-__DESCRIPTION__
+Create from a given github working directory subdirectories for different branches. Currently, we use only two branches master and gh-pages
 
 
 =head2 Requirements
@@ -121,12 +124,12 @@ Artistic License 2.0 http://opensource.org/licenses/artistic-license-2.0
 
 =head1 AUTHOR
 
-__AUTHORNAME__ <__AUTHOREMAIL__>
+Peter von Rohr <peter.vonrohr@qualitasag.ch>
 
 
 =head1 DATE
 
-__STARTDATE__
+2018-10-17 08:38:10
 
 
 =cut

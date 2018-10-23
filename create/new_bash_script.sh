@@ -133,7 +133,12 @@ do
   fi
   if [ "$CURTAG" == "__BASHTOOLUTILDIR__" ]
   then
-    defaultvalue=$UTILDIR
+    if [ -d "$UTILDIR" ]
+    then
+      defaultvalue=$UTILDIR
+    else
+      defaultvalue=NA
+    fi
   fi
   # read input from command line
   read -p "$CURTAG [$defaultvalue]: " inputvalue

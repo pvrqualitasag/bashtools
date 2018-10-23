@@ -50,7 +50,7 @@ check_exist_file_fail () {
   local l_check_file=$1
   if [ ! -f $l_check_file ]
   then
-    log_msg check_exist_file_fail "FAIL because CANNOT find file: $l_check_file"
+    log_msg check_exist_file_fail "FAILED because CANNOT find file: $l_check_file"
     exit 1
   fi
 }
@@ -60,7 +60,7 @@ check_exist_dir_fail () {
   local l_check_dir=$1
   if [ ! -d "$l_check_dir" ]
   then
-    log_msg check_exist_dir_fail "FAIL because CANNOT find directory: $l_check_dir"
+    log_msg check_exist_dir_fail "FAILED because CANNOT find directory: $l_check_dir"
     exit 1
   fi
 }
@@ -74,4 +74,24 @@ check_exist_dir_create () {
     $UT_MKDIR -p $l_check_dir    
   fi  
 
+}
+
+### # check whether directory already exists, if yes then fail
+check_already_exists_dir_fail () {
+  local l_check_dir=$1
+  if [ -d "$l_check_dir" ]
+  then
+    log_msg check_already_exists_dir_fail "FAILED because directory: $l_check_dir already exists"
+    exit 1
+  fi
+}
+
+### # check whether file already exists, if yes then fail
+check_already_exists_file_fail () {
+  local l_check_file=$1
+  if [ -f "$l_check_file" ]
+  then
+    log_msg check_already_exists_file_fail "FAILED because file: $l_check_file already exists"
+    exit 1
+  fi
 }
