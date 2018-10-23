@@ -18,6 +18,7 @@ WHOAMI=/usr/bin/whoami                     # PATH to whoami                     
 DATE=/bin/date                             # PATH to date                            #
 CP=/bin/cp                                 # PATH to cp                              #
 MV=/bin/mv                                 # PATH to mv                              #
+CHMOD=/bin/chmod                           # PATH to chmod                           #
 # ---------------------------------------- # --------------------------------------- #
 # directories                              #                                         #
 INSTALLDIR=`$DIRNAME ${BASH_SOURCE[0]}`    # installation dir of this script         #
@@ -38,6 +39,7 @@ source $UTIL
 TEMPLATEPATH=$TEMPLATEDIR/bash/bash_script_so.template
 GETTAGSCRIPT=$UTILDIR/get_template_tags.sh
 OUTPUTPATH=`$DATE +"%Y%m%d%H%M%S"`_new_script.sh
+DEFAULTSCRIPTRIGHT=755
 
 # defaults for tags
 STARTDATE=`$DATE +"%Y-%m-%d %H:%M:%S"`
@@ -154,6 +156,10 @@ do
   # prepare input of new round from output of current round
   $MV $OUTPUTPATH.new $OUTPUTPATH
 done  
+
+# change rights
+log_msg "Changed rights of $OUTPUTPATH to $DEFAULTSCRIPTRIGHT"
+$CHMOD $DEFAULTSCRIPTRIGHT $OUTPUTPATH
 
 
 ### # ====================================================================== #
