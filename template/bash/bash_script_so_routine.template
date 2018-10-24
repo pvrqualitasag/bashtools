@@ -85,11 +85,14 @@ fi
 #==========
 # produce a start message
 start_msg () {
+    echo ""
     echo "Starting $SCRIPT at: "`date +"%Y-%m-%d %H:%M:%S"`
+    echo ""
 }
 
 # produce an end message
 end_msg () {
+    echo ""
     echo "End of $SCRIPT at: "`date +"%Y-%m-%d %H:%M:%S"`
 }
 
