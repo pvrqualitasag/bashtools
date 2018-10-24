@@ -112,6 +112,9 @@ if test "$dir4check" != "prog"; then
     exit 1
 fi
 
+EVAL_DIR=$(dirname $SCRIPT_DIR)
+cd $EVAL_DIR
+
 
 
 # Continue to put your code here
