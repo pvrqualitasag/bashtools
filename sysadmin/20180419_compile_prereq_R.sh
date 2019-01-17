@@ -296,8 +296,8 @@ fi
 ### gcc
 if [ "$GCCINSTALL" = "TRUE" ]
 then
-  GCC=gcc-5.4.0
-  DLURLGCC=http://mirror.switch.ch/ftp/mirror/gnu/gcc/${GCC}/${GCC}.tar.gz
+  GCC=gcc-8.2.0
+  DLURLGCC=https://mirror.init7.net/gnu/gcc/${GCC}/${GCC}.tar.gz
   echo " *** Installation of $GCC from $DLURLGCC ..."
   cd $DOWNLOADSRC
   download_extract $GCC $DLURLGCC
