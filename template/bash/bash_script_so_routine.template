@@ -85,12 +85,16 @@ fi
 #==========
 # produce a start message
 start_msg () {
+    echo "********************************************************************************"
     echo "Starting $SCRIPT at: "`date +"%Y-%m-%d %H:%M:%S"`
+    echo ""
 }
 
 # produce an end message
 end_msg () {
+    echo ""
     echo "End of $SCRIPT at: "`date +"%Y-%m-%d %H:%M:%S"`
+    echo "********************************************************************************"
 }
 
 
@@ -108,6 +112,9 @@ if test "$dir4check" != "prog"; then
     >&2 echo "Error: This shell-script is not in a directory called prog"
     exit 1
 fi
+
+EVAL_DIR=$(dirname $SCRIPT_DIR)
+cd $EVAL_DIR
 
 
 
