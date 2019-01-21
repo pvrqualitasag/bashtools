@@ -301,7 +301,13 @@ fi
 ### binutils
 if [ "$BINUTILSINSTALL" = "TRUE" ]
 then
-  
+  BINUTIL=binutils-2.31.1
+  DLURLBU=https://mirror.init7.net/gnu/binutils/${BINUTIL}.tar.gz
+  echo " *** Installation of $BINUTIL from $DLURLBU ..."
+  cd $DOWNLOADSRC
+  download_extract $BINUTIL $DLURLBU
+  cd ${BINUTIL}
+  default_compile $LOCALLIB
 fi
 
 ### gcc
