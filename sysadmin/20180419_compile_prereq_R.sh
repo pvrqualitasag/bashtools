@@ -12,9 +12,12 @@ set -o pipefail
 set -o nounset
 
 ### # Global constants
-DRYRUN="TRUE"
-LOCALLIB=$HOME/.usr
-DOWNLOADSRC=$HOME/source
+DRYRUN="FALSE"
+
+### # directories
+QHOME=/qualstorzws01/data_tmp
+LOCALLIB=$QHOME/linuxLib_5.5.0
+DOWNLOADSRC=$QHOME/source
 
 ### # defaults for options
 ZLIBINSTALL="FALSE"
@@ -130,6 +133,7 @@ while getopts :s:u:zbmpoclntgrda FLAG; do
     CURLINSTALL="TRUE"
     READLINEINSTALL="TRUE"
     NCURSESINSTALL="TRUE"
+    BINUTILSINSTALL="TRUE"
     GCCINSTALL="TRUE"
     RSRCINSTALL="TRUE"
     ;;
@@ -337,7 +341,7 @@ fi
 ### R
 if [ "$RSRCINSTALL" = "TRUE" ]
 then
-  RSRC=R-3.4.4
+  RSRC=R-3.5.2
   DLURLRSRC=https://cran.r-project.org/src/base/R-3/${RSRC}.tar.gz
   echo " *** Installation of $RSRC from $DLURLRSRC ..."
   cd $DOWNLOADSRC
