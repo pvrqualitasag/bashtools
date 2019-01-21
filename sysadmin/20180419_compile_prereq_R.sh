@@ -191,7 +191,7 @@ then
   echo " *** Installation of $BZLIB from $DLURLBZLIB ..."
   # switch to download src dir
   cd $DOWNLOADSRC
-  download_extract $BZLIB $DLURLBZLIB
+  git clone https://github.com/enthought/bzip2-1.0.6.git
   cd $BZLIB
   if [ "$DRYRUN" = "TRUE" ]
   then
