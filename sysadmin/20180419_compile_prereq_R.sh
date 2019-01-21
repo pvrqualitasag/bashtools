@@ -25,6 +25,7 @@ OPENSSLINSTALL="FALSE"
 CURLINSTALL="FALSE"
 READLINEINSTALL="FALSE"
 NCURSESINSTALL="FALSE"
+BINUTILSINSTALL="FALSE"
 GCCINSTALL="FALSE"
 RSRCINSTALL="FALSE"
 
@@ -76,7 +77,7 @@ SCRIPT=`basename ${BASH_SOURCE[0]}`
 echo "*** Starting $SCRIPT at: "`date`
 
 ### # Parsing command line arguments
-while getopts :s:u:zbmpoclngrda FLAG; do
+while getopts :s:u:zbmpoclntgrda FLAG; do
   case $FLAG in
     s) # take value after argument "s" as directory for download source
     DOWNLOADSRC=$OPTARG
@@ -107,6 +108,9 @@ while getopts :s:u:zbmpoclngrda FLAG; do
 	  ;;
 	  n) # set option "n" for installing NCURSES
 	  NCURSESINSTALL="TRUE"
+	  ;;
+	  t) # set option "t" for installing gnu binutils
+	  BINUTILSINSTALL="TRUE"
 	  ;;
 	  g) # set option "g" for installing GCC
 	  GCCINSTALL="TRUE"
@@ -293,10 +297,17 @@ then
   default_compile $LOCALLIB
 fi
 
+
+### binutils
+if [ "$BINUTILSINSTALL" = "TRUE" ]
+then
+  
+fi
+
 ### gcc
 if [ "$GCCINSTALL" = "TRUE" ]
 then
-  GCC=gcc-8.2.0
+  GCC=gcc-5.5.0
   DLURLGCC=https://mirror.init7.net/gnu/gcc/${GCC}/${GCC}.tar.gz
   echo " *** Installation of $GCC from $DLURLGCC ..."
   cd $DOWNLOADSRC
