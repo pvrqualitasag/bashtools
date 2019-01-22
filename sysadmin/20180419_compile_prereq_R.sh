@@ -337,7 +337,7 @@ then
     mkdir objdir
     cd objdir
     ### # --disable-multilib says that gcc will only build 64-bit 
-    ../${GCC}/configure --prefix=$LOCALLIB --enable-languages=c,c++,fortran --disable-multilib
+    ../${GCC}/configure --prefix=$LOCALLIB --enable-languages=c,c++,fortran
     make
     make install
   fi
