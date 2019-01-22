@@ -193,7 +193,7 @@ then
   # switch to download src dir
   cd $DOWNLOADSRC
   # check whether sources were already downloaded
-  if [ !  -f "${BZLIB}.tar.gz" ]
+  if [ !  -d "${BZLIB}" ]
   then
     git clone https://github.com/enthought/bzip2-1.0.6.git
   fi  
