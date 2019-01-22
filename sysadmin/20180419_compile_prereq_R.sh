@@ -193,7 +193,7 @@ then
   # switch to download src dir
   cd $DOWNLOADSRC
   # check whether sources were already downloaded
-  if [ !  -d "${BZLIB}" ]
+  if [ ! -d "${BZLIB}" ]
   then
     git clone https://github.com/enthought/bzip2-1.0.6.git
   fi  
@@ -337,7 +337,7 @@ then
     mkdir objdir
     cd objdir
     ### # --disable-multilib says that gcc will only build 64-bit 
-    ../${GCC}/configure --prefix=$LOCALLIB --enable-languages=c,c++,fortran,go --disable-multilib
+    ../${GCC}/configure --prefix=$LOCALLIB --enable-languages=c,c++,fortran --disable-multilib
     make
     make install
   fi
