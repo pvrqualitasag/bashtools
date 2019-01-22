@@ -15,9 +15,10 @@ set -o nounset
 DRYRUN="FALSE"
 
 ### # directories
-QHOME=/qualstorzws01/data_tmp
-LOCALLIB=$QHOME/linuxLib_5.5.0
-DOWNLOADSRC=$QHOME/source
+SRCHOME=/qualstorzws01/data_tmp
+DOWNLOADSRC=$SRCHOME/source
+INHOME=/qualstorzws01/data_projekte
+LOCALLIB=$INHOME/linuxLib_5.5.0
 
 ### # defaults for options
 ZLIBINSTALL="FALSE"
@@ -135,7 +136,7 @@ while getopts :s:u:zbmpoclntgrda FLAG; do
     NCURSESINSTALL="TRUE"
     BINUTILSINSTALL="TRUE"
     GCCINSTALL="TRUE"
-    RSRCINSTALL="TRUE"
+    # RSRCINSTALL="TRUE"
     ;;
   	*) # invalid command line arguments
 	  usage "Invalid command line argument $OPTARG"
@@ -191,7 +192,11 @@ then
   echo " *** Installation of $BZLIB from $DLURLBZLIB ..."
   # switch to download src dir
   cd $DOWNLOADSRC
-  git clone https://github.com/enthought/bzip2-1.0.6.git
+  # check whether sources were already downloaded
+  if [ !  -f "${BZLIB}.tar.gz" ]
+  then
+    git clone https://github.com/enthought/bzip2-1.0.6.git
+  fi  
   cd $BZLIB
   if [ "$DRYRUN" = "TRUE" ]
   then
