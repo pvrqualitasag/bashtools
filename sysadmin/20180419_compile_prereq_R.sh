@@ -346,7 +346,7 @@ then
     ./contrib/download_prerequisites
     cd ..
     mkdir gcc-build
-    cd gcc-buildls
+    cd gcc-build
     ### # --disable-multilib says that gcc will only build 64-bit 
     ../${GCC}/configure --prefix=$LOCALLIB --enable-languages=c,c++,fortran --enable-multilib
     make
