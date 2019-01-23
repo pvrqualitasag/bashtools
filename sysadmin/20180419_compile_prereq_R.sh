@@ -30,6 +30,7 @@ CURLINSTALL="FALSE"
 READLINEINSTALL="FALSE"
 NCURSESINSTALL="FALSE"
 BINUTILSINSTALL="FALSE"
+GLIBCINSTALL="FALSE"
 GCCINSTALL="FALSE"
 RSRCINSTALL="FALSE"
 
@@ -92,7 +93,7 @@ SCRIPT=`basename ${BASH_SOURCE[0]}`
 echo "*** Starting $SCRIPT at: "`date`
 
 ### # Parsing command line arguments
-while getopts :s:u:zbmpoclntgrda FLAG; do
+while getopts :s:u:zbmpoclntigrda FLAG; do
   case $FLAG in
     s) # take value after argument "s" as directory for download source
     DOWNLOADSRC=$OPTARG
@@ -127,6 +128,9 @@ while getopts :s:u:zbmpoclntgrda FLAG; do
 	  t) # set option "t" for installing gnu binutils
 	  BINUTILSINSTALL="TRUE"
 	  ;;
+	  i) # set option "i" for installing GLIBCINSTALL
+	  GLIBCINSTALL="TRUE"
+	  ;;
 	  g) # set option "g" for installing GCC
 	  GCCINSTALL="TRUE"
 	  ;;
@@ -146,7 +150,8 @@ while getopts :s:u:zbmpoclntgrda FLAG; do
     READLINEINSTALL="TRUE"
     NCURSESINSTALL="TRUE"
     BINUTILSINSTALL="TRUE"
-    GCCINSTALL="TRUE"
+    # GLIBCINSTALL="TRUE"
+    # GCCINSTALL="TRUE"
     # RSRCINSTALL="TRUE"
     ;;
   	*) # invalid command line arguments
@@ -190,7 +195,10 @@ fi
 if [ "$DRYRUN" != "TRUE" ]
 then
   export PATH=$LOCALLIB/bin:$PATH
+  #export PATH=$PATH:$LOCALLIB/bin
+  #export PATH=/opt/absoft13.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:$LOCALLIB/bin
   export LD_LIBRARY_PATH=$LOCALLIB/lib:$LD_LIBRARY_PATH 
+  #export LD_LIBRARY_PATH=/opt/absoft13.0/shlib64:/opt/absoft13.0/shlib:$LOCALLIB/lib:
   export CFLAGS="-I$LOCALLIB/include" 
   export LDFLAGS="-L$LOCALLIB/lib" 
 fi
@@ -330,6 +338,22 @@ then
   default_compile $LOCALLIB
 fi
 
+### glibc
+if [ "$GLIBCINSTALL" = "TRUE" ]
+then
+  GLIBC=glibc-2.27
+  DLURLGLIBC=https://mirror.init7.net/gnu/glibc/${GLIBC}.tar.gz
+  cd $DOWNLOADSRC
+  download_extract $GLIBC $DLURLGLIBC
+  GLIBCBUILDDIR=glibc-build
+  if [ -d "$GLIBCBUILDDIR" ];then rm -rf $GLIBCBUILDDIR;fi
+  mkdir $GLIBCBUILDDIR
+  cd $GLIBCBUILDDIR
+  ../${GLIBC}/configure --prefix=$LOCALLIB
+  make
+  make install
+fi
+
 ### gcc
 if [ "$GCCINSTALL" = "TRUE" ]
 then
@@ -348,11 +372,12 @@ then
     mkdir gcc-build
     cd gcc-build
     ### # --disable-multilib says that gcc will only build 64-bit 
-    ../${GCC}/configure --prefix=$LOCALLIB --enable-languages=c,c++,fortran --enable-multilib
+    ../${GCC}/configure --prefix=$LOCALLIB --enable-languages=c,c++,fortran --disable-multilib
     make
     make install
   fi
 fi
+
 
 ### R
 if [ "$RSRCINSTALL" = "TRUE" ]
