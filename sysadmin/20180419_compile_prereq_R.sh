@@ -207,7 +207,9 @@ then
   export PATH=$LOCALLIB/bin:$PATH
   #export PATH=$PATH:$LOCALLIB/bin
   #export PATH=/opt/absoft13.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:$LOCALLIB/bin
+  ORG_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
   export LD_LIBRARY_PATH=$LOCALLIB/lib:$LD_LIBRARY_PATH 
+  echo "[INFO] Change LD_LIBRARY_PATH from: $ORG_LD_LIBRARY_PATH to $LD_LIBRARY_PATH"
   #export LD_LIBRARY_PATH=/opt/absoft13.0/shlib64:/opt/absoft13.0/shlib:$LOCALLIB/lib:
   export CFLAGS="-I$LOCALLIB/include" 
   export LDFLAGS="-L$LOCALLIB/lib" 
@@ -378,6 +380,7 @@ fi
 ### glibc
 if [ "$GLIBCINSTALL" = "TRUE" ]
 then
+  unset LD_LIBRARY_PATH
   GLIBC=glibc-2.27
   DLURLGLIBC=https://mirror.init7.net/gnu/glibc/${GLIBC}.tar.gz
   cd $DOWNLOADSRC
