@@ -211,8 +211,9 @@ then
   export LD_LIBRARY_PATH=$LOCALLIB/lib:$LD_LIBRARY_PATH 
   echo "[INFO] Change LD_LIBRARY_PATH from: $ORG_LD_LIBRARY_PATH to $LD_LIBRARY_PATH"
   #export LD_LIBRARY_PATH=/opt/absoft13.0/shlib64:/opt/absoft13.0/shlib:$LOCALLIB/lib:
-  export CFLAGS="-I$LOCALLIB/include" 
+  export CFLAGS="-I$LOCALLIB/include -O2" 
   export LDFLAGS="-L$LOCALLIB/lib" 
+  export CPPFLAGS="-D_FORTIFY_SOURCE=2"
 fi
 
 ### bzlib
@@ -381,7 +382,7 @@ fi
 if [ "$GLIBCINSTALL" = "TRUE" ]
 then
   unset LD_LIBRARY_PATH
-  GLIBC=glibc-2.26
+  GLIBC=glibc-2.27
   DLURLGLIBC=https://mirror.init7.net/gnu/glibc/${GLIBC}.tar.gz
   cd $DOWNLOADSRC
   download_extract $GLIBC $DLURLGLIBC
