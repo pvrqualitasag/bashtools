@@ -381,7 +381,7 @@ fi
 if [ "$GLIBCINSTALL" = "TRUE" ]
 then
   unset LD_LIBRARY_PATH
-  GLIBC=glibc-2.27
+  GLIBC=glibc-2.26
   DLURLGLIBC=https://mirror.init7.net/gnu/glibc/${GLIBC}.tar.gz
   cd $DOWNLOADSRC
   download_extract $GLIBC $DLURLGLIBC
