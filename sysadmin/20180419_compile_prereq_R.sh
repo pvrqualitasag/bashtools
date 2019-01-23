@@ -363,7 +363,7 @@ fi
 
 
 ### bison
-if [ "BISONINSTALL" = "TRUE" ]
+if [ "$BISONINSTALL" = "TRUE" ]
 then
   BISONPROG=bison-3.2
   DLURLBI=http://ftp.gnu.org/gnu/bison/${BISONPROG}.tar.gz
