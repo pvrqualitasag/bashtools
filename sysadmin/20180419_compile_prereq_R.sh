@@ -48,12 +48,23 @@ download_extract () {
   local l_lib_name=$1
   local l_dl_url=$2
   # check whether old lib dir is available, if yes delete it
-  if [ -d "$l_lib_name" ];then rm -rf $l_lib_name;fi
+  echo "[INFO -- download_extract] Checking for $l_lib_name ..."
+  if [ -d "$l_lib_name" ]
+  then
+    echo "[INFO -- download_extract] $l_lib_name found ... delete it"
+    rm -rf $l_lib_name
+  fi
   # check whether tar.gz exists, if not download it from l_dl_url
-  if [ ! -f "${l_lib_name}.tar.gz" ];then wget $l_dl_url;fi;
+  echo "[INFO -- download_extract] Checking for ${l_lib_name}.tar.gz"
+  if [ ! -f "${l_lib_name}.tar.gz" ]
+  then
+    echo "[INFO -- download_extract] ${l_lib_name}.tar.gz not found ... download"
+    wget $l_dl_url
+  fi
   # extract the tar.gz
+  echo "[INFO -- download_extract] Extracting ${l_lib_name}.tar.gz ..."
   tar xvzf ${l_lib_name}.tar.gz
-  
+  echo "[INFO -- download_extract] DONE"
 }
 
 ### # confiugre and compile the downloaded sources
@@ -334,8 +345,8 @@ then
   else
     ./contrib/download_prerequisites
     cd ..
-    mkdir objdir
-    cd objdir
+    mkdir gcc-build
+    cd gcc-buildls
     ### # --disable-multilib says that gcc will only build 64-bit 
     ../${GCC}/configure --prefix=$LOCALLIB --enable-languages=c,c++,fortran --enable-multilib
     make
