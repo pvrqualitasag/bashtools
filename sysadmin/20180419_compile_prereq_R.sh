@@ -52,7 +52,7 @@ download_extract () {
   if [ -d "$l_lib_name" ]
   then
     echo "[INFO -- download_extract] $l_lib_name found ... delete it"
-    rm -rf $l_lib_name
+    rm -rf "$l_lib_name"
   fi
   # check whether tar.gz exists, if not download it from l_dl_url
   echo "[INFO -- download_extract] Checking for ${l_lib_name}.tar.gz"
@@ -63,7 +63,7 @@ download_extract () {
   fi
   # extract the tar.gz
   echo "[INFO -- download_extract] Extracting ${l_lib_name}.tar.gz ..."
-  tar xvzf ${l_lib_name}.tar.gz
+  tar xvzf "${l_lib_name}.tar.gz"
   echo "[INFO -- download_extract] DONE"
 }
 
