@@ -30,6 +30,8 @@ CURLINSTALL="FALSE"
 READLINEINSTALL="FALSE"
 NCURSESINSTALL="FALSE"
 BINUTILSINSTALL="FALSE"
+M4INSTALL="FALSE"
+BISONINSTALL="FALSE"
 GLIBCINSTALL="FALSE"
 GCCINSTALL="FALSE"
 RSRCINSTALL="FALSE"
@@ -93,7 +95,7 @@ SCRIPT=`basename ${BASH_SOURCE[0]}`
 echo "*** Starting $SCRIPT at: "`date`
 
 ### # Parsing command line arguments
-while getopts :s:u:zbmpoclntigrda FLAG; do
+while getopts :s:u:zbmpoclntefigrda FLAG; do
   case $FLAG in
     s) # take value after argument "s" as directory for download source
     DOWNLOADSRC=$OPTARG
@@ -128,6 +130,12 @@ while getopts :s:u:zbmpoclntigrda FLAG; do
 	  t) # set option "t" for installing gnu binutils
 	  BINUTILSINSTALL="TRUE"
 	  ;;
+	  e) # set option "e" for m4
+	  M4INSTALL="TRUE"
+	  ;;
+	  f) # set option "f" for bison
+    BISONINSTALL="TRUE"
+	  ;;
 	  i) # set option "i" for installing GLIBCINSTALL
 	  GLIBCINSTALL="TRUE"
 	  ;;
@@ -150,6 +158,8 @@ while getopts :s:u:zbmpoclntigrda FLAG; do
     READLINEINSTALL="TRUE"
     NCURSESINSTALL="TRUE"
     BINUTILSINSTALL="TRUE"
+    M4INSTALL="TRUE"
+    BISONINSTALL="TRUE"
     # GLIBCINSTALL="TRUE"
     # GCCINSTALL="TRUE"
     # RSRCINSTALL="TRUE"
@@ -337,6 +347,33 @@ then
   cd ${BINUTIL}
   default_compile $LOCALLIB
 fi
+
+
+### m4
+if [ "$M4INSTALL" = "TRUE" ]
+then
+  M4PROG=m4-1.4.17
+  DLURLM4=http://ftp.gnu.org/gnu/m4/${M4PROG}.tar.gz
+  echo " *** Installation of $M4PROG from $DLURLM4 ..."
+  cd $DOWNLOADSRC
+  download_extract $M4PROG $DLURLM4
+  cd ${M4PROG}
+  default_compile $LOCALLIB
+fi
+
+
+### bison
+if [ "BISONINSTALL" = "TRUE" ]
+then
+  BISONPROG=bison-3.2
+  DLURLBI=http://ftp.gnu.org/gnu/bison/${BISONPROG}.tar.gz
+  echo " *** Installation of $BISONPROG from $DLURLBI ..."
+  cd $DOWNLOADSRC
+  download_extract $BISONPROG $DLURLBI
+  cd $BISONPROG
+  default_compile $LOCALLIB
+fi
+
 
 ### glibc
 if [ "$GLIBCINSTALL" = "TRUE" ]
