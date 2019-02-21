@@ -94,7 +94,7 @@ start_msg
 
 # Check evaluation directory
 #===========================
-dir4check=basename $(dirname $SCRIPT_DIR)
+dir4check=$(echo $SCRIPT_DIR | rev | cut -d/ -f1 | rev)
 if test "$dir4check" != "prog"; then
     >&2 echo "Error: This shell-script is not in a directory called prog"
     exit 1
