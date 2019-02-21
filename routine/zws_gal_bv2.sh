@@ -22,10 +22,9 @@ SCRIPT=$(basename ${BASH_SOURCE[0]})
 usage () {
     local l_MSG=$1
     >&2 echo "Usage Error: $l_MSG"
-    >&2 echo "Usage: $SCRIPT -a <a_example> -b <b_example> -c"
-    >&2 echo "  where -a <a_example> ..."
-    >&2 echo "        -b <b_example> (optional) ..."
-    >&2 echo "        -c (optional) ..."
+    >&2 echo "Usage: $SCRIPT -c -d <dbexportdir>"
+    >&2 echo "  where -c indicates to clean up before starting"
+    >&2 echo "        -d <dbexportdir> specify db directory"
     >&2 echo ""
     exit 1
 }
@@ -34,7 +33,7 @@ usage () {
 # If an option should be followed by an argument, it should be followed by a ":".
 # Notice there is no ":" after "h". The leading ":" suppresses error messages from
 # getopts. This is required to get my unrecognized option code to work.
-CLEANUP=""
+CLEANUP="FALSE"
 DBEXPORTDIR='/qualstorora01/argus/qualitas/zws/zws_arch/2019_04/bvch/gal/'
 while getopts ":cd:h" FLAG; do
     case $FLAG in
@@ -59,8 +58,12 @@ done
 shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
 
 # Check whether required arguments have been specified
-if test "$a_example" == ""; then
-    usage "-a a_example not defined"
+if test "$CLEANUP" == ""; then
+    usage "VARIABLE CLEANUP not defined"
+fi
+
+if [ "$DBEXPORTDIR" == "" ]; then
+    usage "Variable DBEXPORTDIR not defined, specify with -d <db_export_dir>"
 fi
 
 
@@ -100,9 +103,9 @@ fi
 EVAL_DIR=$(dirname $SCRIPT_DIR)
 cd $EVAL_DIR
 
-echo "[INFO -- $SCRIPT_DIR] Evaluation directory: $EVAL_DIR"
 
 # Continue to put your code here
+echo "[INFO -- $SCRIPT_DIR] Evaluation directory: $EVAL_DIR"
 
 
 
