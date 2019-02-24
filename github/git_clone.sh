@@ -13,8 +13,7 @@
 # directories                      #                                         #
 INSTALLDIR=/opt/bashtools          # installation dir of bashtools on host   #
 HOMEROOT=/home                     # root of all home directories            #
-GITURL=https://github.com/charlotte-ngs/LBGFS2018.git
-GITBRANCH=r4tea
+GITBRANCH=master
 # -------------------------------- # --------------------------------------- #
 # prog paths                       # required for cronjob                    #  
 ECHO=/bin/echo                     # PATH to echo                            #
@@ -31,10 +30,11 @@ SCRIPT=`$BASENAME ${BASH_SOURCE[0]}`
 usage () {
   local l_MSG=$1
   $ECHO "Usage Error: $l_MSG"
-  $ECHO "Usage: $SCRIPT -s <student_login>"
+  $ECHO "Usage: $SCRIPT -s <student_login> -u <github_url>"
   $ECHO "  where <student_login> login name of student"
+  $ECHO "        <github_url> URL of the github repository""
   $ECHO "Recognized optional command line arguments"
-  $ECHO "-[OPTIONAL_ARG] <[OPTIONAL_ARG_VALUE]>  -- [OPTIONAL_ARG_MEANING]"
+  $ECHO "-b <branch>  -- specific branch name"
   exit 1
 }
 
@@ -55,11 +55,16 @@ end_msg () {
 ### # If an option should be followed by an argument, it should be followed by a ":".
 ### # Notice there is no ":" after "h". The leading ":" suppresses error messages from
 ### # getopts. This is required to get my unrecognized option code to work.
-while getopts :s:h: FLAG; do
+while getopts :b:s:u:h: FLAG; do
   case $FLAG in
+    b) # specify branch name
+      GITBRANCH=$OPTARG
+      ;;
     s) # set option "[COMMANDLINE_FLAG]"  
       STUDENTLOGIN=$OPTARG
 	    ;;
+	  u) # specify github url
+	    GITURL=$OPTARG
 	  h) # option -h shows usage
 	    usage "Help message for $SCRIPT"
 	    ;;
@@ -81,6 +86,11 @@ start_msg
 if [ -z "$STUDENTLOGIN" ]
 then
   usage "Login name for student cannot be empty"
+fi
+
+if [ -z "$GITURL" ]
+then
+  usage "Github URL cannot be empty"
 fi
 
 # save current working directory
