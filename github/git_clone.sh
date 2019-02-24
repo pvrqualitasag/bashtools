@@ -65,6 +65,7 @@ while getopts :b:s:u:h: FLAG; do
 	    ;;
 	  u) # specify github url
 	    GITURL=$OPTARG
+	    ;;
 	  h) # option -h shows usage
 	    usage "Help message for $SCRIPT"
 	    ;;
