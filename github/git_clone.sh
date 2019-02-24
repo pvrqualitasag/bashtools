@@ -32,7 +32,7 @@ usage () {
   $ECHO "Usage Error: $l_MSG"
   $ECHO "Usage: $SCRIPT -s <student_login> -u <github_url>"
   $ECHO "  where <student_login> login name of student"
-  $ECHO "        <github_url> URL of the github repository""
+  $ECHO "        <github_url> URL of the github repository"
   $ECHO "Recognized optional command line arguments"
   $ECHO "-b <branch>  -- specific branch name"
   exit 1
