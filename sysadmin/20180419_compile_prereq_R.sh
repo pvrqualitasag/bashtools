@@ -12,9 +12,13 @@ set -o pipefail
 set -o nounset
 
 ### # Global constants
-DRYRUN="TRUE"
-LOCALLIB=$HOME/.usr
-DOWNLOADSRC=$HOME/source
+DRYRUN="FALSE"
+
+### # directories
+SRCHOME=/qualstorzws01/data_tmp
+DOWNLOADSRC=$SRCHOME/source
+INHOME=/qualstorzws01/data_projekte
+LOCALLIB=$INHOME/linuxLib_5.5.0
 
 ### # defaults for options
 ZLIBINSTALL="FALSE"
@@ -25,6 +29,10 @@ OPENSSLINSTALL="FALSE"
 CURLINSTALL="FALSE"
 READLINEINSTALL="FALSE"
 NCURSESINSTALL="FALSE"
+BINUTILSINSTALL="FALSE"
+M4INSTALL="FALSE"
+BISONINSTALL="FALSE"
+GLIBCINSTALL="FALSE"
 GCCINSTALL="FALSE"
 RSRCINSTALL="FALSE"
 
@@ -43,12 +51,23 @@ download_extract () {
   local l_lib_name=$1
   local l_dl_url=$2
   # check whether old lib dir is available, if yes delete it
-  if [ -d "$l_lib_name" ];then rm -rf $l_lib_name;fi
+  echo "[INFO -- download_extract] Checking for $l_lib_name ..."
+  if [ -d "$l_lib_name" ]
+  then
+    echo "[INFO -- download_extract] $l_lib_name found ... delete it"
+    rm -rf "$l_lib_name"
+  fi
   # check whether tar.gz exists, if not download it from l_dl_url
-  if [ ! -f "${l_lib_name}.tar.gz" ];then wget $l_dl_url;fi;
+  echo "[INFO -- download_extract] Checking for ${l_lib_name}.tar.gz"
+  if [ ! -f "${l_lib_name}.tar.gz" ]
+  then
+    echo "[INFO -- download_extract] ${l_lib_name}.tar.gz not found ... download"
+    wget $l_dl_url
+  fi
   # extract the tar.gz
-  tar xvzf ${l_lib_name}.tar.gz
-  
+  echo "[INFO -- download_extract] Extracting ${l_lib_name}.tar.gz ..."
+  tar xvzf "${l_lib_name}.tar.gz"
+  echo "[INFO -- download_extract] DONE"
 }
 
 ### # confiugre and compile the downloaded sources
@@ -76,7 +95,7 @@ SCRIPT=`basename ${BASH_SOURCE[0]}`
 echo "*** Starting $SCRIPT at: "`date`
 
 ### # Parsing command line arguments
-while getopts :s:u:zbmpoclngrda FLAG; do
+while getopts :s:u:zbmpoclntefigrda FLAG; do
   case $FLAG in
     s) # take value after argument "s" as directory for download source
     DOWNLOADSRC=$OPTARG
@@ -108,6 +127,18 @@ while getopts :s:u:zbmpoclngrda FLAG; do
 	  n) # set option "n" for installing NCURSES
 	  NCURSESINSTALL="TRUE"
 	  ;;
+	  t) # set option "t" for installing gnu binutils
+	  BINUTILSINSTALL="TRUE"
+	  ;;
+	  e) # set option "e" for m4
+	  M4INSTALL="TRUE"
+	  ;;
+	  f) # set option "f" for bison
+    BISONINSTALL="TRUE"
+	  ;;
+	  i) # set option "i" for installing GLIBCINSTALL
+	  GLIBCINSTALL="TRUE"
+	  ;;
 	  g) # set option "g" for installing GCC
 	  GCCINSTALL="TRUE"
 	  ;;
@@ -126,8 +157,12 @@ while getopts :s:u:zbmpoclngrda FLAG; do
     CURLINSTALL="TRUE"
     READLINEINSTALL="TRUE"
     NCURSESINSTALL="TRUE"
-    GCCINSTALL="TRUE"
-    RSRCINSTALL="TRUE"
+    BINUTILSINSTALL="TRUE"
+    M4INSTALL="TRUE"
+    BISONINSTALL="TRUE"
+    # GLIBCINSTALL="TRUE"
+    # GCCINSTALL="TRUE"
+    # RSRCINSTALL="TRUE"
     ;;
   	*) # invalid command line arguments
 	  usage "Invalid command line argument $OPTARG"
@@ -170,9 +205,16 @@ fi
 if [ "$DRYRUN" != "TRUE" ]
 then
   export PATH=$LOCALLIB/bin:$PATH
+  #export PATH=$PATH:$LOCALLIB/bin
+  #export PATH=/opt/absoft13.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:$LOCALLIB/bin
+  ORG_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
   export LD_LIBRARY_PATH=$LOCALLIB/lib:$LD_LIBRARY_PATH 
+  echo "[INFO] Change LD_LIBRARY_PATH from: $ORG_LD_LIBRARY_PATH to $LD_LIBRARY_PATH"
+  #export LD_LIBRARY_PATH=/opt/absoft13.0/shlib64:/opt/absoft13.0/shlib:$LOCALLIB/lib:
   export CFLAGS="-I$LOCALLIB/include" 
+  # export CFLAGS="-I$LOCALLIB/include -O2" 
   export LDFLAGS="-L$LOCALLIB/lib" 
+  # export CPPFLAGS="-D_FORTIFY_SOURCE=2"
 fi
 
 ### bzlib
@@ -183,7 +225,11 @@ then
   echo " *** Installation of $BZLIB from $DLURLBZLIB ..."
   # switch to download src dir
   cd $DOWNLOADSRC
-  download_extract $BZLIB $DLURLBZLIB
+  # check whether sources were already downloaded
+  if [ ! -d "${BZLIB}" ]
+  then
+    git clone https://github.com/enthought/bzip2-1.0.6.git
+  fi  
   cd $BZLIB
   if [ "$DRYRUN" = "TRUE" ]
   then
@@ -293,10 +339,67 @@ then
   default_compile $LOCALLIB
 fi
 
+
+### binutils
+if [ "$BINUTILSINSTALL" = "TRUE" ]
+then
+  BINUTIL=binutils-2.31.1
+  DLURLBU=https://mirror.init7.net/gnu/binutils/${BINUTIL}.tar.gz
+  echo " *** Installation of $BINUTIL from $DLURLBU ..."
+  cd $DOWNLOADSRC
+  download_extract $BINUTIL $DLURLBU
+  cd ${BINUTIL}
+  default_compile $LOCALLIB
+fi
+
+
+### m4
+if [ "$M4INSTALL" = "TRUE" ]
+then
+  M4PROG=m4-1.4.17
+  DLURLM4=http://ftp.gnu.org/gnu/m4/${M4PROG}.tar.gz
+  echo " *** Installation of $M4PROG from $DLURLM4 ..."
+  cd $DOWNLOADSRC
+  download_extract $M4PROG $DLURLM4
+  cd ${M4PROG}
+  default_compile $LOCALLIB
+fi
+
+
+### bison
+if [ "$BISONINSTALL" = "TRUE" ]
+then
+  BISONPROG=bison-3.2
+  DLURLBI=http://ftp.gnu.org/gnu/bison/${BISONPROG}.tar.gz
+  echo " *** Installation of $BISONPROG from $DLURLBI ..."
+  cd $DOWNLOADSRC
+  download_extract $BISONPROG $DLURLBI
+  cd $BISONPROG
+  default_compile $LOCALLIB
+fi
+
+
+### glibc
+if [ "$GLIBCINSTALL" = "TRUE" ]
+then
+  unset LD_LIBRARY_PATH
+  GLIBC=glibc-2.28
+  DLURLGLIBC=https://mirror.init7.net/gnu/glibc/${GLIBC}.tar.gz
+  cd $DOWNLOADSRC
+  download_extract $GLIBC $DLURLGLIBC
+  GLIBCBUILDDIR=glibc-build
+  if [ -d "$GLIBCBUILDDIR" ];then rm -rf $GLIBCBUILDDIR;fi
+  mkdir $GLIBCBUILDDIR
+  cd $GLIBCBUILDDIR
+  ../${GLIBC}/configure --prefix=$LOCALLIB
+  make
+  make install
+fi
+
 ### gcc
 if [ "$GCCINSTALL" = "TRUE" ]
 then
-  GCC=gcc-8.2.0
+  GCC=gcc-5.5.0
   DLURLGCC=https://mirror.init7.net/gnu/gcc/${GCC}/${GCC}.tar.gz
   echo " *** Installation of $GCC from $DLURLGCC ..."
   cd $DOWNLOADSRC
@@ -308,19 +411,20 @@ then
   else
     ./contrib/download_prerequisites
     cd ..
-    mkdir objdir
-    cd objdir
+    mkdir gcc-build
+    cd gcc-build
     ### # --disable-multilib says that gcc will only build 64-bit 
-    ../${GCC}/configure --prefix=$LOCALLIB --enable-languages=c,c++,fortran,go --disable-multilib
+    ../${GCC}/configure --prefix=$LOCALLIB --enable-languages=c,c++,fortran --disable-multilib
     make
     make install
   fi
 fi
 
+
 ### R
 if [ "$RSRCINSTALL" = "TRUE" ]
 then
-  RSRC=R-3.4.4
+  RSRC=R-3.5.2
   DLURLRSRC=https://cran.r-project.org/src/base/R-3/${RSRC}.tar.gz
   echo " *** Installation of $RSRC from $DLURLRSRC ..."
   cd $DOWNLOADSRC
