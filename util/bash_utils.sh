@@ -45,6 +45,16 @@ log_msg () {
   $UT_ECHO "[${l_RIGHTNOW} -- ${l_CALLER}] $l_MSG"
 }
 
+### # check whether the file exists independent of its type
+check_exist_fail () {
+  local l_check_file=$1
+  if [ ! -e $l_check_file ]
+  then
+    log_msg check_exist_fail "FAILED because CANNOT find file: $l_check_file"
+    exit 1
+  fi
+}
+
 ### # check whether file exists, if not fail
 check_exist_file_fail () {
   local l_check_file=$1
