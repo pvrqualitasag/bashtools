@@ -53,7 +53,13 @@ end_msg () {
   $ECHO "End of $SCRIPT at: "`$DATE +"%Y-%m-%d %H:%M:%S"`
 }
 
-
+### # functions related to logging
+log_msg () {
+  local l_CALLER=$1
+  local l_MSG=$2
+  local l_RIGHTNOW=`$DATE +"%Y%m%d%H%M%S"`
+  $ECHO "[${l_RIGHTNOW} -- ${l_CALLER}] $l_MSG"
+}
 
 ### # ====================================================================== #
 ### # Use getopts for commandline argument parsing ###
