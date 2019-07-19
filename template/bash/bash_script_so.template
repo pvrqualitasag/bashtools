@@ -26,12 +26,16 @@ INSTALLDIR=`$DIRNAME ${BASH_SOURCE[0]}`    # installation dir of bashtools on ho
 # ---------------------------------------- # --------------------------------------- #
 # files                                    #                                         #
 SCRIPT=`$BASENAME ${BASH_SOURCE[0]}`       # Set Script Name variable                #
+# ---------------------------------------- # --------------------------------------- #
+# server name                              #                                         #
+SERVER=`hostname`                          # put hostname of server in variable      #  
 # ======================================== # ======================================= #
 
 
 
 ### # ====================================================================== #
-### # functions
+# Function definitions local to this script
+#==========================================
 usage () {
   local l_MSG=$1
   $ECHO "Usage Error: $l_MSG"
@@ -45,12 +49,17 @@ usage () {
 
 ### # produce a start message
 start_msg () {
+  $ECHO "********************************************************************************"
   $ECHO "Starting $SCRIPT at: "`$DATE +"%Y-%m-%d %H:%M:%S"`
+  $ECHO "Server:  $SERVER"
+  $ECHO
 }
 
 ### # produce an end message
 end_msg () {
+  $ECHO
   $ECHO "End of $SCRIPT at: "`$DATE +"%Y-%m-%d %H:%M:%S"`
+  $ECHO "********************************************************************************"
 }
 
 ### # functions related to logging
@@ -60,6 +69,11 @@ log_msg () {
   local l_RIGHTNOW=`$DATE +"%Y%m%d%H%M%S"`
   $ECHO "[${l_RIGHTNOW} -- ${l_CALLER}] $l_MSG"
 }
+
+
+### # ====================================================================== #
+### # Main part of the script starts here ...
+start_msg
 
 ### # ====================================================================== #
 ### # Use getopts for commandline argument parsing ###
@@ -112,10 +126,6 @@ if test "$a_example" == ""; then
 fi
 
 
-
-### # ====================================================================== #
-### # Main part of the script starts here ...
-start_msg
 
 ### # Continue to put your code here
 

@@ -14,6 +14,7 @@ set -o pipefail   # return value of pipeline is value of last command to exit wi
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 SCRIPT=$(basename ${BASH_SOURCE[0]})
+SERVER=`hostname`
 
 
 # Function definitions local to this script
@@ -22,6 +23,7 @@ SCRIPT=$(basename ${BASH_SOURCE[0]})
 start_msg () {
     echo "********************************************************************************"
     echo "Starting $SCRIPT at: "`date +"%Y-%m-%d %H:%M:%S"`
+    echo "Server:  $SERVER"
     echo ""
 }
 
