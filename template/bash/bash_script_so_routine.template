@@ -16,9 +16,31 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 SCRIPT=$(basename ${BASH_SOURCE[0]})
 
 
+# Function definitions local to this script
+#==========================================
+# produce a start message
+start_msg () {
+    echo "********************************************************************************"
+    echo "Starting $SCRIPT at: "`date +"%Y-%m-%d %H:%M:%S"`
+    echo ""
+}
 
-# Parse and check command line arguments
-#=======================================
+# produce an end message
+end_msg () {
+    echo ""
+    echo "End of $SCRIPT at: "`date +"%Y-%m-%d %H:%M:%S"`
+    echo "********************************************************************************"
+}
+
+### # functions related to logging
+log_msg () {
+  local l_CALLER=$1
+  local l_MSG=$2
+  local l_RIGHTNOW=`date +"%Y%m%d%H%M%S"`
+  echo "[${l_RIGHTNOW} -- ${l_CALLER}] $l_MSG"
+}
+
+# Usage message
 usage () {
     local l_MSG=$1
     >&2 echo "Usage Error: $l_MSG"
@@ -30,6 +52,13 @@ usage () {
     exit 1
 }
 
+
+# ======================================================================
+# Main part of the script starts here ...
+start_msg
+
+# Parse and check command line arguments
+#=======================================
 # Use getopts for commandline argument parsing
 # If an option should be followed by an argument, it should be followed by a ":".
 # Notice there is no ":" after "h". The leading ":" suppresses error messages from
@@ -78,37 +107,6 @@ shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
 if test "$a_example" == ""; then
     usage "-a a_example not defined"
 fi
-
-
-
-# functions
-#==========
-# produce a start message
-start_msg () {
-    echo "********************************************************************************"
-    echo "Starting $SCRIPT at: "`date +"%Y-%m-%d %H:%M:%S"`
-    echo ""
-}
-
-# produce an end message
-end_msg () {
-    echo ""
-    echo "End of $SCRIPT at: "`date +"%Y-%m-%d %H:%M:%S"`
-    echo "********************************************************************************"
-}
-
-### # functions related to logging
-log_msg () {
-  local l_CALLER=$1
-  local l_MSG=$2
-  local l_RIGHTNOW=`date +"%Y%m%d%H%M%S"`
-  echo "[${l_RIGHTNOW} -- ${l_CALLER}] $l_MSG"
-}
-
-# ======================================================================
-# Main part of the script starts here ...
-start_msg
-
 
 
 # Check evaluation directory
