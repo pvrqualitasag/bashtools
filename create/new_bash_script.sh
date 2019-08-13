@@ -83,6 +83,14 @@ shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
 ### # Main part of the script starts here ...
 start_msg $SCRIPT
 
+### # define output directory
+OUTPUTDIR=`$DIRNAME $OUTPUTPATH`
+
+### # if output directory is not the cwd, and it does not exist, create it
+if [ "$OUTPUTDIR" != "." ]
+then
+  check_exist_dir_create $OUTPUTDIR
+fi
 
 ### # checking prerequisits
 check_exist_file_fail $TEMPLATEPATH
