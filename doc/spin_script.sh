@@ -128,9 +128,9 @@ fi
 #' ## Call the spin function in R
 if [ "$OUTFILE" == "" ] 
 then
-  R -e "qgert::spin_sh(ps_sh_hair = '$SCRIPTPATH')" --no-save
+  R -e "if (!'qgert' %in% installed.packages()) devtools::install_github('pvrqualitasag/qgert', upgrade = 'always');qgert::spin_sh(ps_sh_hair = '$SCRIPTPATH')" --no-save
 else
-  R -e "qgert::spin_sh(ps_sh_hair = '$SCRIPTPATH', ps_out_rmd = '$OUTFILE')" --no-save
+  R -e "if (!'qgert' %in% installed.packages()) devtools::install_github('pvrqualitasag/qgert', upgrade = 'always');qgert::spin_sh(ps_sh_hair = '$SCRIPTPATH', ps_out_rmd = '$OUTFILE')" --no-save
 fi
 
 
