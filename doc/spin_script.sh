@@ -1,8 +1,8 @@
 #!/bin/bash
 #' ---
-#' title: __TITLE__
-#' date:  __STARTDATE__
-#' author: __AUTHOR__
+#' title: Spin Bash Script to Rmd
+#' date:  2019-10-15 13:11:24
+#' author: Peter von Rohr
 #' ---
 #+ bash-env-setting, eval=FALSE
 set -o errexit    # exit immediately, if single command exits with non-zero status
@@ -36,20 +36,19 @@ SERVER=`hostname`                          # put hostname of server in variable 
 #'
 #' @title: Show usage message
 #' @param: message that is shown
-#+ usg-msg-fun, eval=FALSE
+#+ usg-msg, eval=FALSE
 usage () {
   local l_MSG=$1
   $ECHO "Usage Error: $l_MSG"
-  $ECHO "Usage: $SCRIPT -a <a_example> -b <b_example> -c"
-  $ECHO "  where -a <a_example> ..."
-  $ECHO "        -b <b_example> (optional) ..."
-  $ECHO "        -c (optional) ..."
+  $ECHO "Usage: $SCRIPT -s <script_path> -o <out_file>"
+  $ECHO "  where -s <script_path>  --  path to input script"
+  $ECHO "        -o <out_file>     --  name of output file"
   $ECHO ""
   exit 1
 }
 
 #' produce a start message
-#+ start-msg-fun, eval=FALSE
+#+ start-msg, eval=FALSE
 start_msg () {
   $ECHO "********************************************************************************"
   $ECHO "Starting $SCRIPT at: "`$DATE +"%Y-%m-%d %H:%M:%S"`
@@ -58,7 +57,7 @@ start_msg () {
 }
 
 #' produce an end message
-#+ end-msg-fun, eval=FALSE
+#+ end-msg, eval=FALSE
 end_msg () {
   $ECHO
   $ECHO "End of $SCRIPT at: "`$DATE +"%Y-%m-%d %H:%M:%S"`
@@ -66,7 +65,7 @@ end_msg () {
 }
 
 #' functions related to logging
-#+ log-msg-fun, eval=FALSE
+#+ log-msg, eval=FALSE
 log_msg () {
   local l_CALLER=$1
   local l_MSG=$2
@@ -85,31 +84,22 @@ start_msg
 #' Notice there is no ":" after "h". The leading ":" suppresses error messages from
 #' getopts. This is required to get my unrecognized option code to work.
 #+ getopts-parsing, eval=FALSE
-a_example=""
-b_example=""
-c_example=""
-while getopts ":a:b:ch" FLAG; do
+SCRIPTPATH=""
+OUTFILE=""
+while getopts ":s:o:h" FLAG; do
   case $FLAG in
     h)
       usage "Help message for $SCRIPT"
       ;;
-    a)
-      a_example=$OPTARG
-# OR for files
-#      if test -f $OPTARG; then
-#        a_example=$OPTARG
-#      else
-#        usage "$OPTARG isn't a regular file"
-#      fi
-# OR for directories
-#      if test -d $OPTARG; then
-#        a_example=$OPTARG
-#      else
-#        usage "$OPTARG isn't a directory"
-#      fi
+    s)
+      if test -f $OPTARG; then
+        SCRIPTPATH=$OPTARG
+      else
+        usage "$OPTARG isn't a regular file"
+      fi
       ;;
-    b)
-      b_example=$OPTARG
+    o)
+      OUTFILE=$OPTARG
       ;;
     c)
       c_example="c_example_value"
@@ -129,19 +119,24 @@ shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
 #' The following statements are used to check whether required arguments 
 #' have been assigned with a non-empty value
 #+ argument-test, eval=FALSE
-if test "$a_example" == ""; then
-  usage "-a a_example not defined"
+if test "$SCRIPTPATH" == ""; then
+  usage "-s <script_path> not defined"
 fi
 
 
 
-#' ## Your Code
-#' Continue to put your code here
+#' ## Call the spin function in R
+if [ "$OUTFILE" == "" ] 
+then
+  R -e "qgert::spin_sh(ps_sh_hair = '$SCRIPTPATH')" --no-save
+else
+  R -e "qgert::spin_sh(ps_sh_hair = '$SCRIPTPATH', ps_out_rmd = '$OUTFILE')" --no-save
+fi
 
 
 
 
-#' ## End of Script
+#' End of Script
 #+ end-msg, eval=FALSE
 end_msg
 
