@@ -34,8 +34,8 @@ SERVER=`hostname`                          # put hostname of server in variable 
 #' In this section user-defined functions that are specific for this script are 
 #' defined in this section.
 #'
-#' @title: Show usage message
-#' @param: message that is shown
+#' * title: Show usage message
+#' * param: message that is shown
 #+ usg-msg-fun, eval=FALSE
 usage () {
   local l_MSG=$1
