@@ -4,6 +4,20 @@
 #' date:  __STARTDATE__
 #' author: __AUTHOR__
 #' ---
+#' ## Purpose
+#' __PURPOSE__ {Write a paragraph about what problems are solved with this script.}
+#'
+#' ## Description
+#' __DESCRIPTION__ {Write a paragraph about how the problems are solved.}
+#'
+#' ## Details
+#' __DETAILS__ {Give some more details here.}
+#'
+#' ## Example
+#' __EXAMPLE__ {Specify an example call of the script.}
+#'
+#' ## Set Directives
+#' General behavior of the script is driven by the following settings
 #+ bash-env-setting, eval=FALSE
 set -o errexit    # exit immediately, if single command exits with non-zero status
 set -o nounset    # treat unset variables as errors
@@ -16,26 +30,30 @@ set -o pipefail   # return value of pipeline is value of last command to exit wi
 #+ shell-tools, eval=FALSE
 ECHO=/bin/echo                             # PATH to echo                            #
 DATE=/bin/date                             # PATH to date                            #
+MKDIR=/bin/mkdir                           # PATH to mkdir                           #
 BASENAME=/usr/bin/basename                 # PATH to basename function               #
 DIRNAME=/usr/bin/dirname                   # PATH to dirname function                #
 
 #' ### Directories
+#' Installation directory of this script
 #+ script-directories, eval=FALSE
 INSTALLDIR=`$DIRNAME ${BASH_SOURCE[0]}`    # installation dir of bashtools on host   #
 
 #' ### Files
+#' This section stores the name of this script and the
+#' hostname in a variable. Both variables are important for logfiles to be able to
+#' trace back which output was produced by which script and on which server.
 #+ script-files, eval=FALSE
 SCRIPT=`$BASENAME ${BASH_SOURCE[0]}`       # Set Script Name variable                #
-SERVER=`hostname`                          # put hostname of server in variable      #  
+SERVER=`hostname`                          # put hostname of server in variable      #
 
 
 
 #' ## Functions
-#' In this section user-defined functions that are specific for this script are 
-#' defined in this section.
+#' The following definitions of general purpose functions are local to this script.
 #'
-#' * title: Show usage message
-#' * param: message that is shown
+#' ### Usage Message
+#' Usage message giving help on how to use the script.
 #+ usg-msg-fun, eval=FALSE
 usage () {
   local l_MSG=$1
@@ -48,7 +66,9 @@ usage () {
   exit 1
 }
 
-#' produce a start message
+#' ### Start Message
+#' The following function produces a start message showing the time
+#' when the script started and on which server it was started.
 #+ start-msg-fun, eval=FALSE
 start_msg () {
   $ECHO "********************************************************************************"
@@ -57,7 +77,10 @@ start_msg () {
   $ECHO
 }
 
-#' produce an end message
+#' ### End Message
+#' This function produces a message denoting the end of the script including
+#' the time when the script ended. This is important to check whether a script
+#' did run successfully to its end.
 #+ end-msg-fun, eval=FALSE
 end_msg () {
   $ECHO
@@ -65,7 +88,8 @@ end_msg () {
   $ECHO "********************************************************************************"
 }
 
-#' functions related to logging
+#' ### Log Message
+#' Log messages formatted similarly to log4r are produced.
 #+ log-msg-fun, eval=FALSE
 log_msg () {
   local l_CALLER=$1
@@ -125,8 +149,8 @@ done
 
 shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
 
-#' ## Checks for Command Line Arguments 
-#' The following statements are used to check whether required arguments 
+#' ## Checks for Command Line Arguments
+#' The following statements are used to check whether required arguments
 #' have been assigned with a non-empty value
 #+ argument-test, eval=FALSE
 if test "$a_example" == ""; then
@@ -137,7 +161,7 @@ fi
 
 #' ## Your Code
 #' Continue to put your code here
-
+#+ your-code-here
 
 
 

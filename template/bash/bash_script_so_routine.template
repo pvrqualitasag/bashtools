@@ -4,6 +4,20 @@
 #' date:  __STARTDATE__
 #' author: __AUTHOR__
 #' ---
+#' ## Purpose
+#' __PURPOSE__ {Write a paragraph about what problems are solved with this script.}
+#'
+#' ## Description
+#' __DESCRIPTION__ {Write a paragraph about how the problems are solved.}
+#'
+#' ## Details
+#' __DETAILS__ {Give some more details here.}
+#'
+#' ## Example
+#' __EXAMPLE__ {Specify an example call of the script.}
+#'
+#' ## Set Directives
+#' General behavior of the script is driven by the following settings
 #+ bash-env-setting, eval=FALSE
 set -o errexit    # exit immediately, if single command exits with non-zero status
 set -o nounset    # treat unset variables as errors
@@ -11,6 +25,9 @@ set -o pipefail   # return value of pipeline is value of last command to exit wi
                   # hence pipe fails if one command in pipe fails
 
 #' ## Global Constants
+#' This section stores the directory of this script, the name of this script and the
+#' hostname in a variable. Both variables are important for logfiles to be able to
+#' trace back which output was produced by which script and on which server.
 #+ script-files, eval=FALSE
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 SCRIPT=$(basename ${BASH_SOURCE[0]})
@@ -18,9 +35,11 @@ SERVER=`hostname`
 
 
 #' ## Functions
-#' The following function definitions are local to this script.
+#' The following definitions of general purpose functions are local to this script.
 #'
-#' produce a start message
+#' ### Start Message
+#' The following function produces a start message showing the time
+#' when the script started and on which server it was started.
 #+ start-msg-fun, eval=FALSE
 start_msg () {
     echo "********************************************************************************"
@@ -29,7 +48,10 @@ start_msg () {
     echo ""
 }
 
-#' produce an end message
+#' ### End Message
+#' This function produces a message denoting the end of the script including
+#' the time when the script ended. This is important to check whether a script
+#' did run successfully to its end.
 #+ end-msg-fun, eval=FALSE
 end_msg () {
     echo ""
@@ -37,7 +59,8 @@ end_msg () {
     echo "********************************************************************************"
 }
 
-#' Functions related to logging
+#' ### Log Message
+#' Log messages formatted similarly to log4r are produced.
 #+ log-msg-fun, eval=FALSE
 log_msg () {
   local l_CALLER=$1
@@ -46,7 +69,8 @@ log_msg () {
   echo "[${l_RIGHTNOW} -- ${l_CALLER}] $l_MSG"
 }
 
-#' Usage message
+#' ### Usage Message
+#' Usage message giving help on how to use the script.
 #+ usage-msg-fun, eval=FALSE
 usage () {
     local l_MSG=$1
@@ -112,6 +136,8 @@ done
 shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
 
 #' ## Check whether required arguments have been specified
+#' Arguments which are not allowed to have an empty value are to be checked in
+#' this section.
 #+ argument-test, eval=FALSE
 if test "$a_example" == ""; then
     usage "-a a_example not defined"
@@ -119,6 +145,7 @@ fi
 
 
 #' ## Check evaluation directory
+#' This script must be run out of a subdirectory called 'prog'.
 #+ dir-check, eval=FALSE
 dir4check=$(echo $SCRIPT_DIR | rev | cut -d/ -f1 | rev)
 if test "$dir4check" != "prog"; then
@@ -126,6 +153,7 @@ if test "$dir4check" != "prog"; then
     exit 1
 fi
 
+#' ## Change to evaluation directory
 #' assign evaluation directory and change dir to it
 #+ assign-eval-dir, eval=FALSE
 EVAL_DIR=$(dirname $SCRIPT_DIR)
@@ -133,11 +161,13 @@ cd $EVAL_DIR
 
 
 #' ## Your Code
-# Continue to put your code here
+#' Continue to put your code here
+#+ your-code-here
 
 
 
 #' ## End of Script
+#' The script ends here with an end message.
 #+ end-msg, eval=FALSE
 end_msg
 
