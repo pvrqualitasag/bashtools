@@ -40,9 +40,10 @@ SERVER=`hostname`                          # put hostname of server in variable 
 usage () {
   local l_MSG=$1
   $ECHO "Usage Error: $l_MSG"
-  $ECHO "Usage: $SCRIPT -s <source_path_script> -t <installation_target_path>"
+  $ECHO "Usage: $SCRIPT -s <source_path_script> -t <installation_target_path> -f"
   $ECHO "  where -s <source_path_script>        --  source path for script"
   $ECHO "        -t <installation_target_path>  --  target path where script will be installed"
+  $ECHO "        -f                             --  force installation, even if target exists"
   $ECHO ""
   exit 1
 }
@@ -83,12 +84,16 @@ start_msg
 #' Notice there is no ":" after "h". The leading ":" suppresses error messages from
 #' getopts. This is required to get my unrecognized option code to work.
 #+ eval=FALSE
-SRCPATH=""
-TRGPATH=""
-while getopts ":s:t:h" FLAG; do
+FORCEINSTALL='FALSE'
+SRCPATH=''
+TRGDIR=''
+while getopts ":fs:t:h" FLAG; do
   case $FLAG in
     h)
       usage "Help message for $SCRIPT"
+      ;;
+    f)
+      FORCEINSTALL='TRUE'
       ;;
     s)
       if test -f $OPTARG; then
@@ -100,7 +105,7 @@ while getopts ":s:t:h" FLAG; do
     t)
       if [ -d "$OPTARG" ]
       then
-        TRGPATH=$OPTARG
+        TRGDIR=$OPTARG
       else
         usage "$OPTARG is not an installation target directory"
       fi
@@ -123,13 +128,21 @@ then
   usage "-s <source_path> cannot be undefined"
 fi
 
-if [ "$TRGPATH" == "" ]
+if [ "$TRGDIR" == "" ]
 then
   usage "-t <target_path> cannot be undefined"
 fi
 
-log_msg $SCRIPT "Copy script from $SRCPATH to target: $TRGPATH ..."
-cp $SRCPATH $TRGPATH
+#' ## Install Mode 
+#' In case -f is specified, the installation is forced
+TRGPATH=${TRGDIR}/$(basename $SRCPATH)
+if [ "$FORCEINSTALL" == 'TRUE' ] && [ -e "$TRGPATH" ]
+then
+  log_msg $SCRIPT " * Remove $TRGPATH to force install from $SRCPATH to target: $TRGDIR ..."
+  rm -rf $TRGPATH
+fi
+log_msg $SCRIPT "Copy script from $SRCPATH to target: $TRGDIR ..."
+cp $SRCPATH $TRGDIR
 
 
 #' Script ends here
